@@ -1,0 +1,24 @@
+workflows:
+  deploy-to-gh-pages:
+    name: Deploy Flutter Web to GitHub Pages
+    max_build_duration: 10
+    environment:
+      flutter: stable
+      vars:
+        REPO_URL: git@github.com:AdharshPS/https://github.com/AdharshPS/portfolio.git
+    scripts:
+      - name: Install dependencies
+        script: flutter pub get
+      - name: Build for web
+        script: flutter build web --release
+      - name: Deploy to GitHub Pages
+        script: |
+          git config --global user.email "codemagic@codemagic.io"
+          git config --global user.name "Codemagic CI"
+          cd build/web
+          git init
+          git remote add origin $REPO_URL
+          git checkout -b gh-pages
+          git add .
+          git commit -m "Deploy from Codemagic [skip ci]"
+          git push --force origin gh-pages
