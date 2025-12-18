@@ -1,16 +1,26 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio/core/router/app_routes.dart';
-import 'package:portfolio/features/dashboard/dashboard_screen.dart';
+import 'package:portfolio/features/dashboard/screens/home/home_screen.dart';
+import 'package:portfolio/features/dashboard/screens/contact/contact_screen.dart';
+import 'package:portfolio/features/dashboard/screens/about/about_screen.dart';
 
 class AppRouter {
-  static GoRouter get router => _router;
-  static final _router = GoRouter(
+  static final GoRouter router = GoRouter(
     routes: [
       GoRoute(
-        path: AppRoutes.dashboard,
-        builder:
-            (context, state) =>
-                DashboardScreen(section: state.uri.queryParameters['section']),
+        path: '/',
+        builder: (context, state) =>
+            HomeScreen(homeKey: GlobalKey(debugLabel: 'homeKey')),
+      ),
+      GoRoute(
+        path: '/contact',
+        builder: (context, state) =>
+            ContactScreen(contactKey: GlobalKey(debugLabel: 'contactKey')),
+      ),
+      GoRoute(
+        path: '/about',
+        builder: (context, state) =>
+            AboutScreen(aboutKey: GlobalKey(debugLabel: 'aboutKey')),
       ),
     ],
   );

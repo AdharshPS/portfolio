@@ -3,6 +3,11 @@ import 'package:portfolio/core/constants/app_colors.dart';
 import 'package:portfolio/core/constants/app_dimensions.dart';
 
 class AppDecoration {
+  static BoxDecoration halfTransparentContainer = BoxDecoration(
+    color: AppColors.halfTransparentContainer,
+    borderRadius: AppDimensions.homeBorderRadius,
+  );
+
   static BoxDecoration homeBackgroundContainer = BoxDecoration(
     border: Border.all(color: AppColors.primary, width: 2),
     borderRadius: AppDimensions.homeBorderRadius,
@@ -19,11 +24,7 @@ class AppDecoration {
   );
 
   static BoxDecoration appBarDecoration = BoxDecoration(
-    color: AppColors.appbarSplash,
-  );
-
-  static BoxDecoration halfTransparentContainer = BoxDecoration(
-    color: AppColors.halfTransparentContainer,
+    color: AppColors.appBarSplash,
   );
 
   static ButtonStyle textButtonStyle = ButtonStyle(

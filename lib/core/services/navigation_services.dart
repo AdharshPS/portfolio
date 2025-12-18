@@ -7,6 +7,7 @@ class NavigationServices {
     required String path,
     Map<String, dynamic>? pathParameters,
     Map<String, dynamic>? queryParameters,
+    Object? extra,
   }) {
     String finalPath = path;
     pathParameters?.forEach((key, value) {
@@ -15,8 +16,14 @@ class NavigationServices {
         Uri.encodeComponent(value.toString()),
       );
     });
-    context.go(
-      Uri(path: finalPath, queryParameters: queryParameters).toString(),
-    );
+
+    final uri = Uri(
+      path: finalPath,
+      queryParameters: queryParameters?.map(
+        (k, v) => MapEntry(k, v.toString()),
+      ),
+    ).toString();
+
+    context.go(uri, extra: extra);
   }
 }

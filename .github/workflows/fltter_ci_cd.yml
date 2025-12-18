@@ -1,0 +1,31 @@
+name: ci cd learning
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.5'
+          channel: stable
+
+      - name: Install packages
+        uses: flutter pub get
+
+      - name: Build web file
+        run: flutter build web --release
+
+      - name: Upload to artifact
+        uses: action/upload-artifact@v4
+        with:
+          name: debug apk build
+          path: build/web
