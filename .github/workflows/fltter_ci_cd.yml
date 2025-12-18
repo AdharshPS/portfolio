@@ -22,7 +22,7 @@ jobs:
         run: flutter pub get
 
       - name: Analyse code
-        run: flutter analyse
+        run: flutter analyze
 
       - name: Build web file
         run: flutter build web --release
