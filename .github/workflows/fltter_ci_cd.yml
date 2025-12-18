@@ -19,7 +19,10 @@ jobs:
           channel: stable
 
       - name: Install packages
-        uses: flutter pub get
+        run: flutter pub get
+
+      - name: Analyse code
+        run: flutter analyse
 
       - name: Build web file
         run: flutter build web --release
