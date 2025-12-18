@@ -28,7 +28,7 @@ jobs:
         run: flutter build web --release
 
       - name: Upload to artifact
-        uses: action/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: debug apk build
           path: build/web
