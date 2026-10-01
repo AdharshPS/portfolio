@@ -36,6 +36,7 @@ jobs:
         run: |
           flutter build web \
             --release \
+            --pwa-strategy=none \
             --base-href="/${{ github.event.repository.name }}/dev/" \
             --dart-define=ENV=dev \
             --dart-define=BUILD_VERSION=${{ github.run_number }}
@@ -72,6 +73,7 @@ jobs:
         run: |
           flutter build web \
             --release \
+            --pwa-strategy=none \
             --base-href="/${{ github.event.repository.name }}/" \
             --dart-define=ENV=prod \
             --dart-define=BUILD_VERSION=${{ github.run_number }}

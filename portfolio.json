@@ -4,15 +4,15 @@
     "role": "Flutter Mobile Developer",
     "headlineGreeting": "// hello, world",
     "tagline": "I build fast, polished Flutter apps for Android and iOS, from clean UI architecture to REST APIs and full-stack integrations.",
-    "avatarImage": "assets/images/me.png",
+    "avatarImage": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/me.webp",
     "email": "adharshps000@gmail.com",
     "phone": "+91 8138987626",
     "location": "Kerala, India",
     "github": "https://github.com/AdharshPS",
     "linkedin": "https://www.linkedin.com/in/adharshzps/",
     "cv": {
-      "fileName": "Adharsh_PS_Flutter_Developer_Resume.pdf",
-      "downloadUrl": "https://drive.google.com/uc?export=download&id=1RFc9qpkNY7QelQ_2ZleT2xBEgNiuv6DG"
+      "fileName": "Adharsh PS CV.pdf",
+      "downloadUrl": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/Adharsh.P.S.CV.pdf"
     }
   },
   "about": {
@@ -20,45 +20,110 @@
     "journey": "I started my journey with a six-month internship at Luminar Technolab, Kochi, where I built a solid foundation in mobile application development. Since then, I've worked on diverse projects — from hospital management systems and dashboards to complex UI implementations and cloud integrations. I enjoy solving real-world problems through clean architecture, scalable code, and intuitive UI/UX.\nI'm always eager to learn, collaborate, and build impactful digital experiences that make a difference."
   },
   "stats": [
-    { "value": "1.5+", "label": "Years experience" },
-    { "value": "3+", "label": "Projects shipped" },
-    { "value": "15+", "label": "Tech & tools" }
+    {
+      "value": "1.5+",
+      "label": "Years experience"
+    },
+    {
+      "value": "3+",
+      "label": "Projects shipped"
+    },
+    {
+      "value": "15+",
+      "label": "Tech & tools"
+    }
   ],
   "skills": {
-    "Core Flutter": ["Flutter", "Dart", "Provider", "Material 3", "Responsive UI", "Clean Architecture"],
-    "Backend & Data": ["REST APIs", "Dio", "Firebase", "Hive", "Sqflite", "PHP & MySQL"],
-    "Security & Storage": ["Flutter Secure Storage", "Shared Preferences", "Offline Sync", "Token Refresh Flows"],
-    "Delivery & Tools": ["Git / GitHub", "CI/CD (GitHub Actions)", "Play Store & App Store", "Postman", "Hoppscotch"]
+    "Core Flutter": [
+      "Flutter",
+      "Dart",
+      "Provider",
+      "Material 3",
+      "Responsive UI",
+      "Clean Architecture"
+    ],
+    "Backend & Data": [
+      "REST APIs",
+      "Dio",
+      "Firebase",
+      "Hive",
+      "Sqflite",
+      "PHP & MySQL"
+    ],
+    "Security & Storage": [
+      "Flutter Secure Storage",
+      "Shared Preferences",
+      "Offline Sync",
+      "Token Refresh Flows"
+    ],
+    "Delivery & Tools": [
+      "Git / GitHub",
+      "CI/CD (GitHub Actions)",
+      "Play Store & App Store",
+      "Postman",
+      "Hoppscotch"
+    ]
   },
   "projects": [
     {
       "title": "NoteFlow",
       "description": "Lightweight offline-first notes application built with Flutter following Clean Architecture. Features Hive local storage, AI-assisted content refinement, and automated GitHub Actions CI/CD.",
       "type": "Open Source",
-      "tags": ["Flutter", "Hive", "AI Integration", "CI/CD", "Clean Arch"],
+      "tags": [
+        "Flutter",
+        "Hive",
+        "AI Integration",
+        "CI/CD",
+        "Clean Arch"
+      ],
       "github": "https://github.com/AdharshPS/notes",
-      "deploy": { "web": "", "playstore": "", "appstore": "", "apk": "" },
-      "thumbnail": "assets/images/projects/noteflow.png",
+      "deploy": {
+        "web": "",
+        "playstore": "",
+        "appstore": "",
+        "apk": ""
+      },
+      "thumbnail": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/noteflow.png",
       "accentColor": "#2563EB"
     },
     {
       "title": "Paws (Pet Marketplace)",
       "description": "User-to-user pet marketplace enabling users to list pets, browse available listings, and connect in real time. Built with Firebase authentication, cloud Firestore, and cloud storage.",
       "type": "Consumer",
-      "tags": ["Flutter", "Firebase Auth", "Firestore", "Cloud Storage"],
+      "tags": [
+        "Flutter",
+        "Firebase Auth",
+        "Firestore",
+        "Cloud Storage"
+      ],
       "github": "https://github.com/AdharshPS/paws_app",
-      "deploy": { "web": "", "playstore": "", "appstore": "", "apk": "" },
-      "thumbnail": "assets/images/projects/paws.png",
+      "deploy": {
+        "web": "",
+        "playstore": "",
+        "appstore": "",
+        "apk": ""
+      },
+      "thumbnail": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/paws.png",
       "accentColor": "#F97316"
     },
     {
       "title": "Netflix UI Clone",
       "description": "Visually faithful recreation of the Netflix mobile interface with dynamic hero banners, categorized movie carousels, responsive layout scaling, and fluid animations.",
       "type": "UI/UX",
-      "tags": ["Flutter", "Responsive Layout", "Micro-animations", "Clean UI"],
+      "tags": [
+        "Flutter",
+        "Responsive Layout",
+        "Micro-animations",
+        "Clean UI"
+      ],
       "github": "https://github.com/AdharshPS/Netflix",
-      "deploy": { "web": "", "playstore": "", "appstore": "", "apk": "" },
-      "thumbnail": "assets/images/projects/netflix.png",
+      "deploy": {
+        "web": "",
+        "playstore": "",
+        "appstore": "",
+        "apk": ""
+      },
+      "thumbnail": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/netflix.png",
       "accentColor": "#EF4444"
     }
   ],
@@ -108,5 +173,8 @@
     "favicon": "me.png",
     "themeColor": "#0B1220"
   },
-  "contactForm": { "serviceType": "none", "endpointOrAction": "" }
+  "contactForm": {
+    "serviceType": "none",
+    "endpointOrAction": ""
+  }
 }

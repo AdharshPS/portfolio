@@ -3,11 +3,14 @@ import 'package:portfolio_new/constants/color_constants.dart';
 import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/constants/contact_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
+import 'package:portfolio_new/services/contact_service.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactMe extends StatefulWidget {
-  const ContactMe({super.key});
+  final ContactService? contactService;
+
+  const ContactMe({super.key, this.contactService});
 
   @override
   State<ContactMe> createState() => _ContactMeState();
@@ -19,8 +22,17 @@ class _ContactMeState extends State<ContactMe> {
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
 
+  late final ContactService _contactService;
   String? _statusMessage;
   bool _submitted = false;
+  bool _isSending = false;
+  bool _isSuccess = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _contactService = widget.contactService ?? ContactService();
+  }
 
   @override
   void dispose() {
@@ -35,20 +47,39 @@ class _ContactMeState extends State<ContactMe> {
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
-  void _handleSubmit() {
+  Future<void> _handleSubmit() async {
+    if (_isSending) return;
+
     setState(() {
       _submitted = true;
     });
 
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
-        _statusMessage =
-            "Thanks for reaching out! Your message has been prepared.";
+        _isSending = true;
+        _statusMessage = null;
       });
-      _nameController.clear();
-      _emailController.clear();
-      _messageController.clear();
-      _submitted = false;
+
+      final result = await _contactService.sendMessage(
+        name: _nameController.text,
+        email: _emailController.text,
+        message: _messageController.text,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _isSending = false;
+        _isSuccess = result.isSuccess;
+        _statusMessage = result.message;
+
+        if (result.isSuccess) {
+          _nameController.clear();
+          _emailController.clear();
+          _messageController.clear();
+          _submitted = false;
+        }
+      });
     }
   }
 
@@ -190,31 +221,55 @@ class _ContactMeState extends State<ContactMe> {
             const SizedBox(height: 24),
 
             // Submit Button
-            _SendButton(onTap: _handleSubmit),
+            _SendButton(
+              onTap: _isSending ? null : _handleSubmit,
+              isLoading: _isSending,
+            ),
 
-            // Success feedback
+            // Feedback banner
             if (_statusMessage != null) ...[
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
-                  vertical: 10,
+                  vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF15803D).withValues(alpha: 0.12),
+                  color: _isSuccess
+                      ? const Color(0xFF15803D).withValues(alpha: 0.12)
+                      : const Color(0xFFDC2626).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: const Color(0xFF15803D).withValues(alpha: 0.3),
+                    color: _isSuccess
+                        ? const Color(0xFF15803D).withValues(alpha: 0.3)
+                        : const Color(0xFFDC2626).withValues(alpha: 0.3),
                   ),
                 ),
-                child: Text(
-                  _statusMessage!,
-                  style: AppTypography.inter(
-                    color: const Color(0xFF16A34A),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                  textAlign: TextAlign.center,
+                child: Row(
+                  children: [
+                    Icon(
+                      _isSuccess
+                          ? Icons.check_circle_outline_rounded
+                          : Icons.error_outline_rounded,
+                      color: _isSuccess
+                          ? const Color(0xFF16A34A)
+                          : const Color(0xFFEF4444),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        _statusMessage!,
+                        style: AppTypography.inter(
+                          color: _isSuccess
+                              ? const Color(0xFF16A34A)
+                              : const Color(0xFFEF4444),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -389,9 +444,10 @@ class _ContactRowState extends State<_ContactRow> {
 }
 
 class _SendButton extends StatefulWidget {
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final bool isLoading;
 
-  const _SendButton({required this.onTap});
+  const _SendButton({required this.onTap, this.isLoading = false});
 
   @override
   State<_SendButton> createState() => _SendButtonState();
@@ -402,8 +458,14 @@ class _SendButtonState extends State<_SendButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isEnabled = widget.onTap != null && !widget.isLoading;
+
     return MouseRegion(
-      cursor: SystemMouseCursors.click,
+      cursor: isEnabled
+          ? SystemMouseCursors.click
+          : (widget.isLoading
+              ? SystemMouseCursors.wait
+              : SystemMouseCursors.basic),
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: GestureDetector(
@@ -411,11 +473,21 @@ class _SendButtonState extends State<_SendButton> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           transform: Matrix4.identity()
-            ..translateByDouble(0.0, isHovered ? -2.0 : 0.0, 0.0, 1.0),
+            ..translateByDouble(
+              0.0,
+              (isHovered && isEnabled) ? -2.0 : 0.0,
+              0.0,
+              1.0,
+            ),
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF2563EB), Color(0xFF1E40AF)],
+            gradient: LinearGradient(
+              colors: isEnabled
+                  ? const [Color(0xFF2563EB), Color(0xFF1E40AF)]
+                  : [
+                      const Color(0xFF2563EB).withValues(alpha: 0.7),
+                      const Color(0xFF1E40AF).withValues(alpha: 0.7),
+                    ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -424,21 +496,46 @@ class _SendButtonState extends State<_SendButton> {
               BoxShadow(
                 color: const Color(
                   0xFF2563EB,
-                ).withValues(alpha: isHovered ? 0.45 : 0.25),
-                blurRadius: isHovered ? 20 : 12,
+                ).withValues(alpha: (isHovered && isEnabled) ? 0.45 : 0.25),
+                blurRadius: (isHovered && isEnabled) ? 20 : 12,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
           child: Center(
-            child: Text(
-              'Send message',
-              style: AppTypography.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
+            child: widget.isLoading
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Sending message...',
+                        style: AppTypography.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  )
+                : Text(
+                    'Send message',
+                    style: AppTypography.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
         ),
       ),

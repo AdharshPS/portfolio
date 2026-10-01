@@ -20,10 +20,15 @@ void setBrowserTitle(String title) {
 
 void handleBuildVersionChange() {
   try {
-    final stored = getPlatformStorage().read('build_version');
+    final storage = getPlatformStorage();
+    final stored = storage.read('build_version');
     stored.then((val) {
       if (val != null && val != buildVersion) {
-        getPlatformStorage().write('build_version', buildVersion);
+        storage.write('build_version', buildVersion);
+        storage.delete('portfolio_data_cache');
+        storage.delete('portfolio_data_cache_timestamp');
+      } else if (val == null) {
+        storage.write('build_version', buildVersion);
       }
     });
   } catch (_) {

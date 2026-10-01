@@ -17,10 +17,17 @@ class PortfolioRemoteDataSource {
             ),
           );
 
-  /// Fetch remote JSON string from the configured raw URL.
+  /// Fetch remote JSON string from the configured raw URL with cache-busting.
   Future<String> fetchRemotePortfolioJson({String? overrideUrl}) async {
-    final url = overrideUrl ?? PortfolioConfig.jsonUrl;
-    final response = await _dio.get<String>(url);
+    final baseUrl = overrideUrl ?? PortfolioConfig.jsonUrl;
+
+    // Append cache-busting timestamp to prevent browser & CDN stale responses
+    final uri = Uri.parse(baseUrl);
+    final queryParams = Map<String, dynamic>.from(uri.queryParameters);
+    queryParams['_t'] = DateTime.now().millisecondsSinceEpoch.toString();
+    final cacheBustedUrl = uri.replace(queryParameters: queryParams).toString();
+
+    final response = await _dio.get<String>(cacheBustedUrl);
 
     if (response.statusCode != 200 || response.data == null) {
       throw DioException(
