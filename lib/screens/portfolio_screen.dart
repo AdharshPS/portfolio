@@ -11,6 +11,7 @@ import 'package:portfolio_new/screens/widgets/skills_screen.dart';
 import 'package:portfolio_new/screens/widgets/testimonials_screen.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
 import 'package:portfolio_new/services/portfolio_state.dart';
+import 'package:portfolio_new/widgets/app_toast.dart';
 
 class PortfolioScrollablePage extends StatefulWidget {
   const PortfolioScrollablePage({super.key});
@@ -116,21 +117,9 @@ class _PortfolioScrollablePageState extends State<PortfolioScrollablePage> {
     if (!success) {
       final error =
           notifier.state.errorMessage ?? 'Unable to refresh portfolio.';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error),
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 4),
-        ),
-      );
+      AppToast.error(context, error);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Portfolio content updated.'),
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 2),
-        ),
-      );
+      AppToast.success(context, 'Portfolio content updated.');
     }
   }
 

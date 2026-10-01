@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:portfolio_new/models/portfolio_model.dart';
 import 'package:portfolio_new/services/web_download.dart';
+import 'package:portfolio_new/widgets/app_toast.dart';
 
 Future<void> downloadCV(BuildContext context, {CvInfo? cvInfo}) async {
   final url = cvInfo?.downloadUrl.trim();
@@ -13,12 +14,7 @@ Future<void> downloadCV(BuildContext context, {CvInfo? cvInfo}) async {
       : 'Adharsh_PS_Flutter_Developer_Resume.pdf';
 
   if (url == null || url.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('CV download link is currently unavailable.'),
-        backgroundColor: Colors.redAccent,
-      ),
-    );
+    AppToast.error(context, 'CV download link is currently unavailable.');
     return;
   }
 
@@ -38,9 +34,7 @@ Future<void> downloadCV(BuildContext context, {CvInfo? cvInfo}) async {
 
       if (!context.mounted) return;
       Navigator.pop(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('CV download started')));
+      AppToast.info(context, 'CV download started');
     } else {
       showDialog(
         context: context,
@@ -69,9 +63,7 @@ Future<void> downloadCV(BuildContext context, {CvInfo? cvInfo}) async {
 
       if (!context.mounted) return;
       Navigator.pop(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('CV downloaded to: $filePath')));
+      AppToast.success(context, 'CV downloaded to: $filePath');
       debugPrint('✅ CV saved at: $filePath');
     }
   } catch (e) {
@@ -80,9 +72,7 @@ Future<void> downloadCV(BuildContext context, {CvInfo? cvInfo}) async {
       Navigator.pop(context);
     }
     if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error downloading CV: $e')));
+      AppToast.error(context, 'Error downloading CV: $e');
     }
   }
 }

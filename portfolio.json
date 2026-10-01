@@ -3,11 +3,11 @@
     "name": "Adharsh P S",
     "role": "Flutter Mobile Developer",
     "headlineGreeting": "// hello, world",
-    "tagline": "I build fast, polished Flutter apps for Android and iOS, from clean UI architecture to REST APIs and full-stack integrations.",
+    "tagline": "I build fast, polished Flutter apps for Android, iOS, Web and Windows Desktop, from clean architecture to REST APIs and ERP integrations.",
     "avatarImage": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/me.webp",
     "email": "adharshps000@gmail.com",
     "phone": "+91 8138987626",
-    "location": "Kerala, India",
+    "location": "Thrissur, Kerala, India",
     "github": "https://github.com/AdharshPS",
     "linkedin": "https://www.linkedin.com/in/adharshzps/",
     "cv": {
@@ -16,20 +16,20 @@
     }
   },
   "about": {
-    "intro": "I'm Adharsh P S, a Flutter Developer with 1.5 years of industry experience at Avanzo Cyber Security Solutions Pvt. Ltd., Thrissur. I specialize in building high-quality, responsive mobile and web applications using Flutter, backed by strong experience with PHP & MySQL, REST APIs, and full-stack integrations.",
-    "journey": "I started my journey with a six-month internship at Luminar Technolab, Kochi, where I built a solid foundation in mobile application development. Since then, I've worked on diverse projects — from hospital management systems and dashboards to complex UI implementations and cloud integrations. I enjoy solving real-world problems through clean architecture, scalable code, and intuitive UI/UX.\nI'm always eager to learn, collaborate, and build impactful digital experiences that make a difference."
+    "intro": "I'm Adharsh P S, a Flutter Developer with 2+ years of industry experience. I currently work as a Junior Flutter Developer at Odox SoftHub LLP, building enterprise cross-platform applications for Android, iOS, Web and Windows Desktop. I work with Clean Architecture, MVVM and Provider, and I'm experienced in REST APIs, JWT authentication, offline-first sync and Odoo ERP integrations.",
+    "journey": "I started with a Flutter internship at Luminar Technolab, Kochi, where I built a solid foundation in mobile development. I then joined Avanzo Cyber Security Solutions, Thrissur, as a Product Developer, shipping apps to the Play Store and App Store and building backends with Django and PHP. In January 2026 I moved to Odox SoftHub LLP, where I build offline-first warehouse apps, biometric attendance sync tools and enterprise SaaS products backed by Odoo.\nI enjoy solving real-world problems with clean architecture, scalable code and intuitive UI, and I'm always eager to learn and collaborate."
   },
   "stats": [
     {
-      "value": "1.5+",
+      "value": "2+",
       "label": "Years experience"
     },
     {
-      "value": "3+",
+      "value": "8+",
       "label": "Projects shipped"
     },
     {
-      "value": "15+",
+      "value": "20+",
       "label": "Tech & tools"
     }
   ],
@@ -40,31 +40,167 @@
       "Provider",
       "Material 3",
       "Responsive UI",
-      "Clean Architecture"
+      "Clean Architecture",
+      "MVVM",
+      "SOLID Principles",
+      "Android, iOS, Web & Windows Desktop"
     ],
     "Backend & Data": [
       "REST APIs",
       "Dio",
-      "Firebase",
-      "Hive",
-      "Sqflite",
-      "PHP & MySQL"
+      "Odoo ERP Integration",
+      "Django (Python)",
+      "PHP & MySQL",
+      "Firebase"
     ],
     "Security & Storage": [
+      "JWT Authentication",
       "Flutter Secure Storage",
+      "Hive",
+      "Sqflite",
       "Shared Preferences",
-      "Offline Sync",
-      "Token Refresh Flows"
+      "Offline-First Sync"
+    ],
+    "Hardware & Integrations": [
+      "ZKTeco Biometric Devices",
+      "Barcode Scanning (Honeywell, Zebra, Camera)"
+    ],
+    "Design & AI Tools": [
+      "Figma",
+      "Antigravity (AI-Assisted Development)"
     ],
     "Delivery & Tools": [
       "Git / GitHub",
-      "CI/CD (GitHub Actions)",
+      "CI/CD (GitHub Actions, Codemagic)",
       "Play Store & App Store",
       "Postman",
       "Hoppscotch"
     ]
   },
   "projects": [
+    {
+      "title": "Attendance Synchronization System",
+      "description": "Flutter Windows Desktop app used in production by an enterprise client. Integrates ZKTeco biometric devices with Odoo ERP to automate user and attendance log retrieval via secure device communication and REST API sync, replacing manual reconciliation.",
+      "type": "Professional",
+      "tags": [
+        "Flutter",
+        "Windows Desktop",
+        "ZKTeco",
+        "Odoo",
+        "REST API"
+      ],
+      "github": "",
+      "deploy": {
+        "web": "",
+        "playstore": "",
+        "appstore": "",
+        "apk": ""
+      },
+      "thumbnail": "",
+      "accentColor": "#0EA5E9"
+    },
+    {
+      "title": "Supply Chain Management App",
+      "description": "Offline-first Flutter app (Android & iOS) for warehouse operations as a SaaS product: ASN receiving and put-away with batch handling, barcode scanning across Honeywell, Zebra and camera scanners, order picking with tote assignment, and packing. Syncs via Hive and Dio with an Odoo ERP backend.",
+      "type": "Professional",
+      "tags": [
+        "Flutter",
+        "Offline-First",
+        "Hive",
+        "Dio",
+        "Barcode Scanning",
+        "Odoo"
+      ],
+      "github": "",
+      "deploy": {
+        "web": "",
+        "playstore": "",
+        "appstore": "",
+        "apk": ""
+      },
+      "thumbnail": "",
+      "accentColor": "#10B981"
+    },
+    {
+      "title": "Office Management App",
+      "description": "Enterprise Flutter app (Android & iOS) built as a SaaS product for business clients. Covers attendance, expenses, leave, payslips and events with manager login, JWT authentication, encrypted local storage and an Odoo ERP backend.",
+      "type": "Professional",
+      "tags": [
+        "Flutter",
+        "JWT",
+        "Secure Storage",
+        "Odoo",
+        "Provider"
+      ],
+      "github": "",
+      "deploy": {
+        "web": "",
+        "playstore": "",
+        "appstore": "",
+        "apk": ""
+      },
+      "thumbnail": "",
+      "accentColor": "#8B5CF6"
+    },
+    {
+      "title": "API Testing Tool (Postman Clone)",
+      "description": "Cross-platform REST client for Windows Desktop and Web with a request builder, collections, environments, request history and Firebase API testing support, built to improve internal developer workflow.",
+      "type": "Professional",
+      "tags": [
+        "Flutter",
+        "Desktop",
+        "Web",
+        "REST Client",
+        "Firebase"
+      ],
+      "github": "",
+      "deploy": {
+        "web": "",
+        "playstore": "",
+        "appstore": "",
+        "apk": ""
+      },
+      "thumbnail": "",
+      "accentColor": "#F59E0B"
+    },
+    {
+      "title": "UdaanCheck",
+      "description": "Travel-assist app for Android and iOS covering airline luggage rules, released on the Play Store and App Store.",
+      "type": "Consumer",
+      "tags": [
+        "Flutter",
+        "Play Store",
+        "App Store"
+      ],
+      "github": "",
+      "deploy": {
+        "web": "",
+        "playstore": "",
+        "appstore": "",
+        "apk": ""
+      },
+      "thumbnail": "",
+      "accentColor": "#14B8A6"
+    },
+    {
+      "title": "CyberHulk",
+      "description": "Cyber-awareness Android application published on Google Play.",
+      "type": "Consumer",
+      "tags": [
+        "Flutter",
+        "Android",
+        "Play Store"
+      ],
+      "github": "",
+      "deploy": {
+        "web": "",
+        "playstore": "",
+        "appstore": "",
+        "apk": ""
+      },
+      "thumbnail": "",
+      "accentColor": "#6366F1"
+    },
     {
       "title": "NoteFlow",
       "description": "Lightweight offline-first notes application built with Flutter following Clean Architecture. Features Hive local storage, AI-assisted content refinement, and automated GitHub Actions CI/CD.",
@@ -88,13 +224,14 @@
     },
     {
       "title": "Paws (Pet Marketplace)",
-      "description": "User-to-user pet marketplace enabling users to list pets, browse available listings, and connect in real time. Built with Firebase authentication, cloud Firestore, and cloud storage.",
-      "type": "Consumer",
+      "description": "User-to-user pet marketplace for listing and browsing pets, built with BLoC state management. Uses Firebase authentication and Firestore, with Cloudinary for media storage in a hybrid cloud setup.",
+      "type": "Personal",
       "tags": [
         "Flutter",
+        "BLoC",
         "Firebase Auth",
         "Firestore",
-        "Cloud Storage"
+        "Cloudinary"
       ],
       "github": "https://github.com/AdharshPS/paws_app",
       "deploy": {
@@ -129,45 +266,67 @@
   ],
   "experience": [
     {
-      "role": "Flutter Developer",
-      "company": "Avanzo Cyber Security Solutions Pvt. Ltd., Thrissur",
-      "period": "2023 – Present",
+      "role": "Junior Flutter Developer",
+      "company": "Odox SoftHub LLP",
+      "period": "Jan 2026 – Present",
       "points": [
-        "Built and maintained high-performance Flutter applications for Android and iOS.",
-        "Engineered full-stack integrations with REST APIs, PHP & MySQL backends, and cloud services.",
-        "Delivered hospital management systems, analytics dashboards, and responsive UI architectures."
+        "Build and maintain enterprise cross-platform apps (Android, iOS, Windows Desktop, Web) with Flutter and Dart using Clean Architecture, SOLID and MVVM, in a 3-person team (2 frontend, 1 backend).",
+        "Integrate REST APIs, manage state with Provider, implement JWT authentication with Flutter Secure Storage, and maintain CI/CD pipelines (GitHub Actions, Codemagic).",
+        "Deliver offline-first experiences with Hive, SharedPreferences and local-to-server sync for warehouse and field use cases with unreliable connectivity.",
+        "Shipped a production Windows Desktop app integrating ZKTeco biometric devices with Odoo ERP, replacing manual attendance reconciliation.",
+        "Use AI-assisted development (Antigravity) to speed up feature delivery and reduce development cycle time."
       ]
     },
     {
-      "role": "Mobile App Development Intern",
-      "company": "Luminar Technolab, Kochi",
-      "period": "6 Months",
+      "role": "Product Developer",
+      "company": "Avanzo Cyber Security Solutions Pvt. Ltd., Thrissur",
+      "period": "Jun 2024 – Jan 2026",
       "points": [
-        "Built a strong foundation in Dart, Flutter, state management, and mobile software lifecycle.",
-        "Developed end-to-end mobile screens with clean architecture, offline storage, and responsive layouts."
+        "Developed and shipped cross-platform apps (Android, iOS, Web) with Flutter, including UdaanCheck and CyberHulk on the Play Store and App Store.",
+        "Built secure, scalable backend services and REST APIs with Django (Python) and PHP for production mobile and web clients.",
+        "Implemented JWT authentication, secure session handling and role-based access control.",
+        "Resolved cross-platform performance and security issues and managed Play Store and App Store release cycles.",
+        "Delivered a hospital management system (web and mobile) with an integrated backend for an external client."
       ]
+    },
+    {
+      "role": "Flutter Development Intern",
+      "company": "Luminar Technolab, Kochi",
+      "period": "Aug 2023 – Feb 2024",
+      "points": [
+        "Built Android and iOS apps with Flutter and Dart, implementing state management and responsive UI.",
+        "Integrated REST APIs and Firebase (Cloud Storage, Realtime Database, Authentication).",
+        "Added local storage for offline support, improving usability and reliability."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Diploma in Computer Engineering",
+      "institution": "Maharaja's Technological Institute, Thrissur",
+      "period": "2020 – 2023"
     }
   ],
   "testimonials": [
     {
-      "quote": "Adharsh delivers clean, testable Flutter applications with strong attention to architecture, state management, and UI performance.",
+      "quote": "Adharsh consistently delivers clean, well-structured Flutter code. His work on offline-first sync and Odoo integrations has been dependable, and he communicates clearly across frontend and backend.",
+      "name": "Engineering Team",
+      "role": "Odox SoftHub LLP"
+    },
+    {
+      "quote": "He took ownership of apps from development through Play Store and App Store release, and handled secure authentication and backend work with care.",
       "name": "Technical Team",
       "role": "Avanzo Cyber Security Solutions"
     },
     {
-      "quote": "Strong foundation in Dart & Flutter, fast problem solver, and deeply dedicated to building polished mobile user experiences.",
+      "quote": "A quick learner with a strong grasp of Dart and Flutter fundamentals, who applied state management and clean architecture well throughout his internship.",
       "name": "Training Mentors",
       "role": "Luminar Technolab"
-    },
-    {
-      "quote": "Clean code, modular widgets, and reliable API integrations delivered with great communication and discipline.",
-      "name": "Project Collaborator",
-      "role": "Open Source & Freelance"
     }
   ],
   "seoAndMeta": {
     "siteTitle": "Adharsh P S | Flutter Mobile Developer",
-    "metaDescription": "Portfolio of Adharsh P S, a Flutter developer building polished, high-performance mobile and web applications.",
+    "metaDescription": "Portfolio of Adharsh P S, a Flutter developer building polished, high-performance mobile, web and desktop applications.",
     "canonicalUrl": "https://adharshps.dev",
     "ogImage": "assets/images/og-preview.png",
     "favicon": "me.png",

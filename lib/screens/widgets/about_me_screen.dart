@@ -193,22 +193,28 @@ class _AboutContent extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        Text(
-                          item[0],
-                          style: AppTypography.inter(
-                            fontSize: isMobile ? 22 : 28,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.primaryInk(context),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            item[0],
+                            style: AppTypography.inter(
+                              fontSize: isMobile ? 22 : 28,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.primaryInk(context),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          item[1],
-                          textAlign: TextAlign.center,
-                          style: AppTypography.inter(
-                            fontSize: isMobile ? 11 : 13,
-                            fontWeight: FontWeight.w500,
-                            color: muted,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            item[1],
+                            textAlign: TextAlign.center,
+                            style: AppTypography.inter(
+                              fontSize: isMobile ? 11 : 13,
+                              fontWeight: FontWeight.w500,
+                              color: muted,
+                            ),
                           ),
                         ),
                       ],

@@ -19,12 +19,12 @@ A modern, responsive, and high-performance developer portfolio web application b
 The portfolio content is decoupled from the UI code and managed dynamically via [portfolio.json](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/portfolio.json).
 
 ### 1. Dynamic Live Updates (No Rebuild Required)
-The web application fetches the latest data at runtime directly from GitHub:
+The web application fetches the latest data at runtime directly from the public GitHub repository:
 ```
 https://raw.githubusercontent.com/AdharshPS/portfolio_new/main/portfolio.json
 ```
-- **Instant Changes:** When you edit [portfolio.json](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/portfolio.json) and push directly to `main`, visitors receive the updated content immediately upon reloading (cached with local storage fallback).
-- **Fast CI/CD:** Because `portfolio.json` is listed under `paths-ignore` in [.github/workflows/deploy.yml](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/.github/workflows/deploy.yml), changing content **does not** trigger a redundant, time-consuming Flutter build.
+- **Instant Changes:** When you edit [portfolio.json](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/portfolio.json) and push to `main`, visitors receive the updated content immediately upon reloading (cached with local storage fallback).
+- **Fast CI/CD:** Changes to `portfolio.json` **do not** trigger a Flutter build or deployment pipeline run because `.github/workflows/deploy.yml` has `paths-ignore: - 'portfolio.json'`.
 
 ### 2. Content Structure Overview
 Open [portfolio.json](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/portfolio.json) in your editor. You can update any of the following blocks:
