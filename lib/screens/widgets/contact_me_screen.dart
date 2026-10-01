@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/constants/contact_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
@@ -115,7 +115,7 @@ class _ContactMeState extends State<ContactMe> {
             // Name Field
             Text(
               'Name',
-              style: GoogleFonts.inter(
+              style: AppTypography.inter(
                 fontSize: 14.5,
                 fontWeight: FontWeight.w600,
                 color: text,
@@ -124,7 +124,7 @@ class _ContactMeState extends State<ContactMe> {
             const SizedBox(height: 8),
             TextFormField(
               controller: _nameController,
-              style: GoogleFonts.inter(fontSize: 15, color: text),
+              style: AppTypography.inter(fontSize: 15, color: text),
               decoration: _inputDecoration(context, 'Your name'),
               validator: (val) {
                 if (val == null || val.trim().length < 2) {
@@ -138,7 +138,7 @@ class _ContactMeState extends State<ContactMe> {
             // Email Field
             Text(
               'Email',
-              style: GoogleFonts.inter(
+              style: AppTypography.inter(
                 fontSize: 14.5,
                 fontWeight: FontWeight.w600,
                 color: text,
@@ -148,7 +148,7 @@ class _ContactMeState extends State<ContactMe> {
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              style: GoogleFonts.inter(fontSize: 15, color: text),
+              style: AppTypography.inter(fontSize: 15, color: text),
               decoration: _inputDecoration(context, 'name@example.com'),
               validator: (val) {
                 if (val == null ||
@@ -165,7 +165,7 @@ class _ContactMeState extends State<ContactMe> {
             // Message Field
             Text(
               'Message',
-              style: GoogleFonts.inter(
+              style: AppTypography.inter(
                 fontSize: 14.5,
                 fontWeight: FontWeight.w600,
                 color: text,
@@ -175,7 +175,7 @@ class _ContactMeState extends State<ContactMe> {
             TextFormField(
               controller: _messageController,
               maxLines: 4,
-              style: GoogleFonts.inter(fontSize: 15, color: text),
+              style: AppTypography.inter(fontSize: 15, color: text),
               decoration: _inputDecoration(
                 context,
                 'Tell me about your project...',
@@ -209,7 +209,7 @@ class _ContactMeState extends State<ContactMe> {
                 ),
                 child: Text(
                   _statusMessage!,
-                  style: GoogleFonts.inter(
+                  style: AppTypography.inter(
                     color: const Color(0xFF16A34A),
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
@@ -231,7 +231,7 @@ class _ContactMeState extends State<ContactMe> {
 
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.inter(
+      hintStyle: AppTypography.inter(
         color: AppColors.muted(context).withValues(alpha: 0.6),
         fontSize: 14.5,
       ),
@@ -286,7 +286,7 @@ class _ContactInfo extends StatelessWidget {
       children: [
         Text(
           StringConstants.contactMeTitle,
-          style: GoogleFonts.inter(
+          style: AppTypography.inter(
             fontSize: isMobile ? 28 : 36,
             fontWeight: FontWeight.w700,
             color: text,
@@ -297,7 +297,7 @@ class _ContactInfo extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           StringConstants.contactMeSubtitle,
-          style: GoogleFonts.inter(fontSize: 16, height: 1.6, color: muted),
+          style: AppTypography.inter(fontSize: 16, height: 1.6, color: muted),
           textAlign: isMobile ? TextAlign.center : TextAlign.start,
         ),
         const SizedBox(height: 32),
@@ -371,7 +371,7 @@ class _ContactRowState extends State<_ContactRow> {
               child: Text(
                 widget.label,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                   color: (isHovered && widget.onTap != null) ? primaryInk : text,
@@ -433,7 +433,7 @@ class _SendButtonState extends State<_SendButton> {
           child: Center(
             child: Text(
               'Send message',
-              style: GoogleFonts.inter(
+              style: AppTypography.inter(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,

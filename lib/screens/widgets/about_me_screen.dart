@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/constants/image_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
@@ -98,7 +98,7 @@ class _AvatarBlock extends StatelessWidget {
             child: Center(
               child: Text(
                 _getInitials(profile.name),
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: 56,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
@@ -141,7 +141,7 @@ class _AboutContent extends StatelessWidget {
       children: [
         Text(
           'About me',
-          style: GoogleFonts.inter(
+          style: AppTypography.inter(
             fontSize: isMobile ? 28 : 36,
             fontWeight: FontWeight.w700,
             color: text,
@@ -151,7 +151,7 @@ class _AboutContent extends StatelessWidget {
         const SizedBox(height: 16),
         Text(
           intro,
-          style: GoogleFonts.inter(
+          style: AppTypography.inter(
             fontSize: isMobile ? 15 : 16.5,
             height: 1.7,
             color: muted,
@@ -161,7 +161,7 @@ class _AboutContent extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           journey,
-          style: GoogleFonts.inter(
+          style: AppTypography.inter(
             fontSize: isMobile ? 14 : 15.5,
             height: 1.7,
             color: muted,
@@ -195,7 +195,7 @@ class _AboutContent extends StatelessWidget {
                       children: [
                         Text(
                           item[0],
-                          style: GoogleFonts.inter(
+                          style: AppTypography.inter(
                             fontSize: isMobile ? 22 : 28,
                             fontWeight: FontWeight.w800,
                             color: AppColors.primaryInk(context),
@@ -205,7 +205,7 @@ class _AboutContent extends StatelessWidget {
                         Text(
                           item[1],
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.inter(
+                          style: AppTypography.inter(
                             fontSize: isMobile ? 11 : 13,
                             fontWeight: FontWeight.w500,
                             color: muted,

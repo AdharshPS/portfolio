@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/constants/skill_constants.dart';
 import 'package:portfolio_new/models/portfolio_model.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
@@ -33,7 +33,7 @@ class SkillsScreen extends StatelessWidget {
               // Section Header
               Text(
                 'Skills',
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: isMobile ? 28 : 36,
                   fontWeight: FontWeight.w700,
                   color: AppColors.text(context),
@@ -43,7 +43,7 @@ class SkillsScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'The tools and frameworks I reach for to build, connect and ship production mobile apps.',
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: 16,
                   color: AppColors.muted(context),
                 ),
@@ -131,7 +131,7 @@ class _SkillCategoryCardState extends State<_SkillCategoryCard> {
           children: [
             Text(
               widget.title,
-              style: GoogleFonts.inter(
+              style: AppTypography.inter(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: AppColors.text(context),
@@ -170,7 +170,7 @@ class _SkillChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.jetBrainsMono(
+        style: AppTypography.mono(
           fontSize: 12.5,
           fontWeight: FontWeight.w600,
           color: primaryInk,

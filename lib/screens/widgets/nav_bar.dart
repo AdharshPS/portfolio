@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/main.dart';
 
 class NavBar extends StatelessWidget {
@@ -76,7 +76,7 @@ class NavBar extends StatelessWidget {
                         child: RichText(
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                            style: GoogleFonts.jetBrainsMono(
+                            style: AppTypography.mono(
                               fontSize: isSmall ? 16 : 19,
                               fontWeight: FontWeight.w700,
                               color: AppColors.text(context),
@@ -234,7 +234,7 @@ class _NavLinkState extends State<_NavLink> {
           ),
           child: Text(
             widget.title,
-            style: GoogleFonts.inter(
+            style: AppTypography.inter(
               fontSize: 15,
               fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w500,
               color: activeOrHover ? primaryInk : muted,
@@ -358,7 +358,7 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
           ),
           child: Text(
             widget.title,
-            style: GoogleFonts.inter(
+            style: AppTypography.inter(
               color: Colors.white,
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -444,7 +444,7 @@ class MobileDrawer extends StatelessWidget {
                                   children: [
                                     RichText(
                                       text: TextSpan(
-                                        style: GoogleFonts.jetBrainsMono(
+                                        style: AppTypography.mono(
                                           fontSize: 17,
                                           fontWeight: FontWeight.w700,
                                           color: AppColors.text(context),
@@ -533,7 +533,7 @@ class MobileDrawer extends StatelessWidget {
                                   ),
                                   title: Text(
                                     isDark ? 'Light mode' : 'Dark mode',
-                                    style: GoogleFonts.inter(
+                                    style: AppTypography.inter(
                                       color: AppColors.text(context),
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -563,7 +563,7 @@ class MobileDrawer extends StatelessWidget {
                                   },
                                   child: Text(
                                     'Hire me',
-                                    style: GoogleFonts.inter(
+                                    style: AppTypography.inter(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 16,
                                     ),
@@ -604,7 +604,7 @@ class _DrawerLink extends StatelessWidget {
       leading: Icon(icon, color: AppColors.muted(context)),
       title: Text(
         title,
-        style: GoogleFonts.inter(
+        style: AppTypography.inter(
           fontSize: 16,
           fontWeight: FontWeight.w600,
           color: AppColors.text(context),

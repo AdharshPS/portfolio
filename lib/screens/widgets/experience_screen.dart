@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
 import 'package:portfolio_new/models/portfolio_model.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
@@ -45,7 +45,7 @@ class ExperienceScreen extends StatelessWidget {
               // Section Header
               Text(
                 'Experience',
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: isMobile ? 28 : 36,
                   fontWeight: FontWeight.w700,
                   color: AppColors.text(context),
@@ -55,7 +55,7 @@ class ExperienceScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'My professional career journey in mobile application engineering.',
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: 16,
                   color: AppColors.muted(context),
                 ),
@@ -142,7 +142,7 @@ class _TimelineTile extends StatelessWidget {
                   // Period Badge
                   Text(
                     item.period,
-                    style: GoogleFonts.jetBrainsMono(
+                    style: AppTypography.mono(
                       fontSize: isMobile ? 12 : 13,
                       fontWeight: FontWeight.w600,
                       color: primaryInk,
@@ -153,7 +153,7 @@ class _TimelineTile extends StatelessWidget {
                   // Role & Company
                   Text(
                     '${item.role} · ${item.company}',
-                    style: GoogleFonts.inter(
+                    style: AppTypography.inter(
                       fontSize: isMobile ? 16 : 18,
                       fontWeight: FontWeight.w700,
                       color: text,
@@ -180,7 +180,7 @@ class _TimelineTile extends StatelessWidget {
                           Expanded(
                             child: Text(
                               point,
-                              style: GoogleFonts.inter(
+                              style: AppTypography.inter(
                                 fontSize: isMobile ? 13.5 : 14.5,
                                 height: 1.6,
                                 color: muted,

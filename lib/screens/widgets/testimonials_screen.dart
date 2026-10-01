@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
 import 'package:portfolio_new/models/portfolio_model.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
@@ -47,7 +47,7 @@ class TestimonialsScreen extends StatelessWidget {
               // Section Header
               Text(
                 'Kind words',
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: isMobile ? 28 : 36,
                   fontWeight: FontWeight.w700,
                   color: AppColors.text(context),
@@ -57,7 +57,7 @@ class TestimonialsScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Feedback from technical mentors and project collaborators.',
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: 16,
                   color: AppColors.muted(context),
                 ),
@@ -188,7 +188,7 @@ class _TestimonialCardState extends State<_TestimonialCard> {
           children: [
             Text(
               '“${widget.testimonial.quote}”',
-              style: GoogleFonts.inter(
+              style: AppTypography.inter(
                 fontSize: widget.isMobile ? 14 : 15,
                 height: 1.65,
                 fontStyle: FontStyle.italic,
@@ -202,7 +202,7 @@ class _TestimonialCardState extends State<_TestimonialCard> {
                 children: [
                   Text(
                     widget.testimonial.name,
-                    style: GoogleFonts.inter(
+                    style: AppTypography.inter(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: text,
@@ -211,7 +211,7 @@ class _TestimonialCardState extends State<_TestimonialCard> {
                   const SizedBox(height: 2),
                   Text(
                     widget.testimonial.role,
-                    style: GoogleFonts.inter(
+                    style: AppTypography.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: muted,

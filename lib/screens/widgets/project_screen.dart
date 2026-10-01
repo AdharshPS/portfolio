@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/constants/image_constants.dart';
 import 'package:portfolio_new/constants/project_constants.dart';
 import 'package:portfolio_new/models/portfolio_model.dart';
@@ -94,7 +94,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               // Section Heading
               Text(
                 'Projects',
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: isMobile ? 28 : 36,
                   fontWeight: FontWeight.w700,
                   color: AppColors.text(context),
@@ -104,7 +104,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               const SizedBox(height: 8),
               Text(
                 "A selection of applications I've designed, architected and built with Flutter.",
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: 16,
                   color: AppColors.muted(context),
                 ),
@@ -132,7 +132,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 40),
                   child: Text(
                     'No projects found in this category.',
-                    style: GoogleFonts.inter(
+                    style: AppTypography.inter(
                       fontSize: 15,
                       color: AppColors.muted(context),
                     ),
@@ -191,7 +191,7 @@ class _FilterPill extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.inter(
+          style: AppTypography.inter(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: isSelected ? Colors.white : AppColors.text(context),
@@ -349,7 +349,7 @@ class _ProjectCardState extends State<_ProjectCard> {
                       ),
                       child: Text(
                         widget.project.type,
-                        style: GoogleFonts.inter(
+                        style: AppTypography.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -369,7 +369,7 @@ class _ProjectCardState extends State<_ProjectCard> {
                 children: [
                   Text(
                     widget.project.title,
-                    style: GoogleFonts.inter(
+                    style: AppTypography.inter(
                       fontSize: 19,
                       fontWeight: FontWeight.w700,
                       color: text,
@@ -378,7 +378,7 @@ class _ProjectCardState extends State<_ProjectCard> {
                   const SizedBox(height: 8),
                   Text(
                     widget.project.description,
-                    style: GoogleFonts.inter(
+                    style: AppTypography.inter(
                       fontSize: 14,
                       height: 1.55,
                       color: muted,
@@ -406,7 +406,7 @@ class _ProjectCardState extends State<_ProjectCard> {
                         ),
                         child: Text(
                           tag,
-                          style: GoogleFonts.jetBrainsMono(
+                          style: AppTypography.mono(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
                             color: primaryInk,
@@ -429,7 +429,7 @@ class _ProjectCardState extends State<_ProjectCard> {
                           children: [
                             Text(
                               link.key,
-                              style: GoogleFonts.inter(
+                              style: AppTypography.inter(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: primaryInk,

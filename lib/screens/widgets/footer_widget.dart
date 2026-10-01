@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
 
@@ -50,7 +50,7 @@ class FooterWidget extends StatelessWidget {
                     Flexible(
                       child: Text(
                         '© $year $name. Built with care.',
-                        style: GoogleFonts.inter(fontSize: 14, color: muted),
+                        style: AppTypography.inter(fontSize: 14, color: muted),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -80,7 +80,7 @@ class FooterWidget extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       '© $year $name. Built with care.',
-                      style: GoogleFonts.inter(fontSize: 14, color: muted),
+                      style: AppTypography.inter(fontSize: 14, color: muted),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -149,7 +149,7 @@ class _FooterLinkState extends State<_FooterLink> {
         onTap: widget.onTap,
         child: Text(
           widget.label,
-          style: GoogleFonts.inter(
+          style: AppTypography.inter(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: isHovered

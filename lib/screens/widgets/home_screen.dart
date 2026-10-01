@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/constants/contact_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
 import 'package:portfolio_new/services/download_cv_service.dart';
@@ -116,7 +116,7 @@ class _HeroContent extends StatelessWidget {
         // Greeting // hello, world
         Text(
           greeting,
-          style: GoogleFonts.jetBrainsMono(
+          style: AppTypography.mono(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: primaryInk,
@@ -130,7 +130,7 @@ class _HeroContent extends StatelessWidget {
         RichText(
           textAlign: isMobile ? TextAlign.center : TextAlign.start,
           text: TextSpan(
-            style: GoogleFonts.inter(
+            style: AppTypography.inter(
               fontSize: isMobile ? 36 : 56,
               fontWeight: FontWeight.w800,
               height: 1.12,
@@ -153,7 +153,7 @@ class _HeroContent extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 540),
           child: Text(
             tagline,
-            style: GoogleFonts.inter(
+            style: AppTypography.inter(
               fontSize: isMobile ? 16 : 18,
               height: 1.6,
               color: muted,
@@ -277,7 +277,7 @@ class _PhoneMockup extends StatelessWidget {
                       ),
                       child: Text(
                         'flutter run',
-                        style: GoogleFonts.jetBrainsMono(
+                        style: AppTypography.mono(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF1C1917),
@@ -307,7 +307,7 @@ class _PhoneMockup extends StatelessWidget {
                       ),
                       child: RichText(
                         text: TextSpan(
-                          style: GoogleFonts.jetBrainsMono(
+                          style: AppTypography.mono(
                             fontSize: 10,
                             color: Colors.white,
                             height: 1.5,
@@ -416,7 +416,7 @@ class _StatusLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.jetBrainsMono(
+      style: AppTypography.mono(
         fontSize: 10.5,
         fontWeight: FontWeight.w600,
         color: Colors.white.withValues(alpha: 0.95),
@@ -483,7 +483,7 @@ class _ButtonPrimaryState extends State<_ButtonPrimary> {
                 child: Text(
                   widget.label,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
+                  style: AppTypography.inter(
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -551,7 +551,7 @@ class _ButtonGhostState extends State<_ButtonGhost> {
                 child: Text(
                   widget.label,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
+                  style: AppTypography.inter(
                     color: text,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -614,7 +614,7 @@ class _SocialPillState extends State<_SocialPill> {
               const SizedBox(width: 6),
               Text(
                 widget.label,
-                style: GoogleFonts.inter(
+                style: AppTypography.inter(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w600,
                   color: text,

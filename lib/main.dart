@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/typography_constants.dart';
 import 'package:portfolio_new/screens/portfolio_screen.dart';
 import 'package:portfolio_new/services/portfolio_notifier.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
@@ -93,7 +93,7 @@ class PortfolioApp extends StatelessWidget {
               useMaterial3: true,
               brightness: Brightness.light,
               scaffoldBackgroundColor: AppColors.lightBg,
-              textTheme: GoogleFonts.interTextTheme(
+              textTheme: AppTypography.primaryTextTheme(
                 ThemeData.light().textTheme,
               ),
               colorScheme: const ColorScheme.light(
@@ -107,7 +107,7 @@ class PortfolioApp extends StatelessWidget {
               useMaterial3: true,
               brightness: Brightness.dark,
               scaffoldBackgroundColor: AppColors.darkBg,
-              textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+              textTheme: AppTypography.primaryTextTheme(ThemeData.dark().textTheme),
               colorScheme: const ColorScheme.dark(
                 primary: AppColors.darkPrimary,
                 secondary: AppColors.accent,
