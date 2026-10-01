@@ -1,28 +1,34 @@
 class SkillConstants {
-  static Map<String, List<String>> skills = {
-    "Core Flutter Skills": [
+  static const Map<String, List<String>> skills = {
+    "Core Flutter": [
       "Flutter",
       "Dart",
       "Provider",
-      "Rest API",
-      "Firebase",
+      "Material 3",
+      "Responsive UI",
+      "Clean Architecture",
+    ],
+    "Backend & Data": [
+      "REST APIs",
       "Dio",
-      "Shared Preferences",
-      "Flutter Secure Storage",
-      "Playstore & Appstore Deployment",
+      "Firebase",
       "Hive",
       "Sqflite",
+      "PHP & MySQL",
     ],
-    "Version Control": ["Git / GitHub"],
-    "Tools": ["Postman", "Hoppscotch"],
-    "Basic Programming Knowledge": [
-      "C (Basic)",
-      "C++ (Basic)",
-      "HTML (Basic)",
-      "MySQL (Basic)",
-      "CSS (Basic)",
-      "PHP (Basic)",
-      "JavaScript (Basic)",
+    "Security & Storage": [
+      "Flutter Secure Storage",
+      "Shared Preferences",
+      "Offline Sync",
+      "Token Refresh Flows",
+    ],
+    "Delivery & Tools": [
+      "Git / GitHub",
+      "CI/CD (GitHub Actions)",
+      "Play Store & App Store",
+      "Postman",
+      "Hoppscotch",
     ],
   };
 }
+

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
-import 'package:portfolio_new/constants/skill_constants.dart';
+import 'package:portfolio_new/constants/text_constants.dart';
 
-class SkillsScreen extends StatelessWidget {
-  const SkillsScreen({super.key});
+class TestimonialsScreen extends StatelessWidget {
+  const TestimonialsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,24 +13,24 @@ class SkillsScreen extends StatelessWidget {
     final isTablet = size.width >= 640 && size.width < 1024;
     final isMobile = size.width < 640;
 
-    final crossAxisCount = isDesktop ? 2 : (isTablet ? 2 : 1);
+    final crossAxisCount = isDesktop ? 3 : (isTablet ? 2 : 1);
 
     return Container(
       width: double.infinity,
-      color: AppColors.bg(context),
+      color: AppColors.surface(context),
       padding: EdgeInsets.symmetric(
         horizontal: isDesktop ? 60 : (isTablet ? 40 : 20),
         vertical: isDesktop ? 90 : (isTablet ? 70 : 50),
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1100),
+          constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Section Header
               Text(
-                'Skills',
+                'Kind words',
                 style: GoogleFonts.inter(
                   fontSize: isMobile ? 28 : 36,
                   fontWeight: FontWeight.w700,
@@ -40,7 +40,7 @@ class SkillsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'The tools and frameworks I reach for to build, connect and ship production mobile apps.',
+                'Feedback from technical mentors and project collaborators.',
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   color: AppColors.muted(context),
@@ -48,25 +48,20 @@ class SkillsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 36),
 
-              // Responsive Skills Grid
+              // Testimonial Cards
               LayoutBuilder(
                 builder: (context, constraints) {
-                  final entries = SkillConstants.skills.entries.toList();
-                  final cardWidth = crossAxisCount == 1
-                      ? constraints.maxWidth
-                      : (constraints.maxWidth - (crossAxisCount - 1) * 20) /
-                          crossAxisCount;
+                  final spacing = 20.0;
+                  final totalSpacing = (crossAxisCount - 1) * spacing;
+                  final cardWidth = (constraints.maxWidth - totalSpacing) / crossAxisCount;
 
                   return Wrap(
-                    spacing: 20,
-                    runSpacing: 20,
-                    children: entries.map((entry) {
+                    spacing: spacing,
+                    runSpacing: spacing,
+                    children: StringConstants.testimonials.map((t) {
                       return SizedBox(
                         width: cardWidth,
-                        child: _SkillCategoryCard(
-                          title: entry.key,
-                          skills: entry.value,
-                        ),
+                        child: _TestimonialCard(testimonial: t),
                       );
                     }).toList(),
                   );
@@ -80,24 +75,24 @@ class SkillsScreen extends StatelessWidget {
   }
 }
 
-class _SkillCategoryCard extends StatefulWidget {
-  final String title;
-  final List<String> skills;
+class _TestimonialCard extends StatefulWidget {
+  final TestimonialItem testimonial;
 
-  const _SkillCategoryCard({
-    required this.title,
-    required this.skills,
-  });
+  const _TestimonialCard({required this.testimonial});
 
   @override
-  State<_SkillCategoryCard> createState() => _SkillCategoryCardState();
+  State<_TestimonialCard> createState() => _TestimonialCardState();
 }
 
-class _SkillCategoryCardState extends State<_SkillCategoryCard> {
+class _TestimonialCardState extends State<_TestimonialCard> {
   bool isHovered = false;
 
   @override
   Widget build(BuildContext context) {
+    final text = AppColors.text(context);
+    final muted = AppColors.muted(context);
+    final line = AppColors.line(context);
+
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
@@ -112,7 +107,7 @@ class _SkillCategoryCardState extends State<_SkillCategoryCard> {
           border: Border.all(
             color: isHovered
                 ? AppColors.primaryColor(context).withValues(alpha: 0.5)
-                : AppColors.line(context),
+                : line,
             width: 1.2,
           ),
           boxShadow: isHovered
@@ -123,53 +118,33 @@ class _SkillCategoryCardState extends State<_SkillCategoryCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.title,
+              '“${widget.testimonial.quote}”',
               style: GoogleFonts.inter(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.text(context),
+                fontSize: 15,
+                height: 1.65,
+                fontStyle: FontStyle.italic,
+                color: text,
               ),
             ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: widget.skills.map((skill) {
-                return _SkillChip(label: skill);
-              }).toList(),
+            const SizedBox(height: 20),
+            Text(
+              widget.testimonial.name,
+              style: GoogleFonts.inter(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: text,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              widget.testimonial.role,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: muted,
+              ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SkillChip extends StatelessWidget {
-  final String label;
-  const _SkillChip({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final primary = AppColors.primaryColor(context);
-    final primaryInk = AppColors.primaryInk(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: primary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(99),
-        border: Border.all(
-          color: primary.withValues(alpha: 0.22),
-          width: 1,
-        ),
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.jetBrainsMono(
-          fontSize: 12.5,
-          fontWeight: FontWeight.w600,
-          color: primaryInk,
         ),
       ),
     );

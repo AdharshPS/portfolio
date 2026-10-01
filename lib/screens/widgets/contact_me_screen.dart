@@ -1,10 +1,9 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:portfolio_new/constants/color_constants.dart';
 import 'package:portfolio_new/constants/contact_constants.dart';
-import 'package:portfolio_new/constants/image_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class ContactMe extends StatefulWidget {
   const ContactMe({super.key});
@@ -14,259 +13,420 @@ class ContactMe extends StatefulWidget {
 }
 
 class _ContactMeState extends State<ContactMe> {
-  bool _visible = false;
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _messageController = TextEditingController();
 
-  Future<void> _launchUrl(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Could not open $url")));
+  String? _statusMessage;
+  bool _submitted = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _launch(String url) async {
+    final uri = Uri.parse(url);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  void _handleSubmit() {
+    setState(() {
+      _submitted = true;
+    });
+
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        _statusMessage =
+            "Thanks for reaching out! Your message has been prepared.";
+      });
+      _nameController.clear();
+      _emailController.clear();
+      _messageController.clear();
+      _submitted = false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
+    final size = MediaQuery.of(context).size;
+    final isDesktop = size.width >= 1024;
+    final isTablet = size.width >= 640 && size.width < 1024;
 
-    return VisibilityDetector(
-      key: const Key('Contact-me-section'),
-      onVisibilityChanged: (info) {
-        if (info.visibleFraction > 0.1 && !_visible) {
-          setState(() {
-            _visible = true; // triggers the animations
-          });
-        }
-      },
-
-      child: Container(
-        width: MediaQuery.sizeOf(context).width,
-        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF0F2027), Color(0xFF203A43)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // Center vertically
-            crossAxisAlignment:
-                CrossAxisAlignment.center, // Center horizontally
-            children: [
-              // Animated Title
-              _visible
-                  ? FadeInUpBig(
-                      duration: const Duration(seconds: 1),
-
-                      child: Text(
-                        "Contact Me",
-                        style: TextStyle(
-                          fontSize: isMobile ? 32 : 48,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-              SizedBox(height: isMobile ? 20 : 40),
-              _visible
-                  ? FadeIn(
-                      duration: const Duration(seconds: 1),
-                      child: Container(
-                        width: 120,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.blueAccent,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-
-              const SizedBox(height: 20),
-
-              // Animated Subtitle
-              FadeInUpBig(
-                duration: const Duration(seconds: 1),
-                child: Text(
-                  StringConstants.contactMeSubtitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: .8),
-                    fontSize: isMobile ? 16 : 18,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 50),
-
-              // Contact Cards
-              Wrap(
-                spacing: 20,
-                runSpacing: 20,
-                alignment: WrapAlignment.center,
-                children: [
-                  _animatedCard(
-                    title: "Email Me",
-                    subtitle: ContactConstants.email,
-                    imagePath: ImageConstants.emailIcon,
-                    startColor: Colors.blueAccent,
-                    endColor: Colors.lightBlue,
-                    onTap: () => _launchUrl('mailto:${ContactConstants.email}'),
-                  ),
-                  _animatedCard(
-                    title: "GitHub",
-                    subtitle: "View my projects",
-                    imagePath: ImageConstants.githubLogo,
-                    startColor: Colors.black,
-                    endColor: const Color.fromARGB(255, 81, 81, 81),
-                    onTap: () => _launchUrl(ContactConstants.github),
-                  ),
-                  _animatedCard(
-                    title: "LinkedIn",
-                    subtitle: "Connect with me",
-                    imagePath: ImageConstants.linkedinLogo,
-                    startColor: Colors.blue[700]!,
-                    endColor: Colors.lightBlueAccent,
-                    onTap: () => _launchUrl(ContactConstants.linkedin),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+    return Container(
+      width: double.infinity,
+      color: AppColors.bg(context),
+      padding: EdgeInsets.symmetric(
+        horizontal: isDesktop ? 60 : (isTablet ? 40 : 20),
+        vertical: isDesktop ? 90 : (isTablet ? 70 : 50),
       ),
-    );
-  }
-
-  Widget _animatedCard({
-    required String title,
-    required String subtitle,
-    required String imagePath, // changed from IconData
-    required Color startColor,
-    required Color endColor,
-    required VoidCallback onTap,
-  }) {
-    return FadeInUp(
-      duration: const Duration(milliseconds: 800),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: onTap,
-          child: TweenAnimationBuilder(
-            tween: Tween<double>(begin: 1.0, end: 1.0),
-            duration: const Duration(milliseconds: 200),
-            builder: (context, double scale, child) {
-              return HoverAnimatedContainer(
-                width: 240,
-                padding: const EdgeInsets.all(20),
-                startColor: startColor,
-                endColor: endColor,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: isDesktop
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Display image instead of icon
-                    Image.asset(
-                      imagePath,
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.contain,
+                    Expanded(
+                      child: _ContactInfo(onLaunch: _launch),
                     ),
-                    const SizedBox(height: 18),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.85),
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
+                    const SizedBox(width: 60),
+                    Expanded(
+                      child: _buildFormCard(context),
                     ),
                   ],
+                )
+              : Column(
+                  children: [
+                    _ContactInfo(onLaunch: _launch),
+                    const SizedBox(height: 40),
+                    _buildFormCard(context),
+                  ],
                 ),
-              );
-            },
-          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildFormCard(BuildContext context) {
+    final text = AppColors.text(context);
+    final line = AppColors.line(context);
+
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: AppColors.card(context),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: line, width: 1.2),
+        boxShadow: AppColors.cardShadow(context),
+      ),
+      child: Form(
+        key: _formKey,
+        autovalidateMode:
+            _submitted ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Name Field
+            Text(
+              'Name',
+              style: GoogleFonts.inter(
+                fontSize: 14.5,
+                fontWeight: FontWeight.w600,
+                color: text,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _nameController,
+              style: GoogleFonts.inter(fontSize: 15, color: text),
+              decoration: _inputDecoration(context, 'Your name'),
+              validator: (val) {
+                if (val == null || val.trim().length < 2) {
+                  return 'Enter your name (at least 2 characters).';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+
+            // Email Field
+            Text(
+              'Email',
+              style: GoogleFonts.inter(
+                fontSize: 14.5,
+                fontWeight: FontWeight.w600,
+                color: text,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              style: GoogleFonts.inter(fontSize: 15, color: text),
+              decoration: _inputDecoration(context, 'name@example.com'),
+              validator: (val) {
+                if (val == null || !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(val.trim())) {
+                  return 'Enter a valid email address.';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+
+            // Message Field
+            Text(
+              'Message',
+              style: GoogleFonts.inter(
+                fontSize: 14.5,
+                fontWeight: FontWeight.w600,
+                color: text,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _messageController,
+              maxLines: 4,
+              style: GoogleFonts.inter(fontSize: 15, color: text),
+              decoration: _inputDecoration(context, 'Tell me about your project...'),
+              validator: (val) {
+                if (val == null || val.trim().length < 10) {
+                  return 'Write at least 10 characters.';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 24),
+
+            // Submit Button
+            _SendButton(onTap: _handleSubmit),
+
+            // Success feedback
+            if (_statusMessage != null) ...[
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF15803D).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: const Color(0xFF15803D).withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Text(
+                  _statusMessage!,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF16A34A),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(BuildContext context, String hint) {
+    final line = AppColors.line(context);
+    final card = AppColors.card(context);
+    final primary = AppColors.primaryColor(context);
+
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: GoogleFonts.inter(
+        color: AppColors.muted(context).withValues(alpha: 0.6),
+        fontSize: 14.5,
+      ),
+      filled: true,
+      fillColor: card,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: line, width: 1.2),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: line, width: 1.2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: primary, width: 1.8),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFFDC2626), width: 1.2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFFDC2626), width: 1.8),
       ),
     );
   }
 }
 
-class HoverAnimatedContainer extends StatefulWidget {
-  final double width;
-  final EdgeInsets padding;
-  final Widget child;
-  final Color startColor;
-  final Color endColor;
+class _ContactInfo extends StatelessWidget {
+  final Function(String) onLaunch;
 
-  const HoverAnimatedContainer({
-    super.key,
-    required this.width,
-    required this.padding,
-    required this.child,
-    required this.startColor,
-    required this.endColor,
-  });
-
-  @override
-  State<HoverAnimatedContainer> createState() => _HoverAnimatedContainerState();
-}
-
-class _HoverAnimatedContainerState extends State<HoverAnimatedContainer> {
-  bool isHover = false;
+  const _ContactInfo({required this.onLaunch});
 
   @override
   Widget build(BuildContext context) {
-    final double scaleFactor = isHover ? 1.05 : 1.0;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      width: widget.width,
-      padding: widget.padding,
-      transform: Matrix4.identity()
-        ..scaleByDouble(scaleFactor, scaleFactor, scaleFactor, 1.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        gradient: LinearGradient(
-          colors: [
-            Color.lerp(
-              widget.startColor,
-              Colors.transparent,
-              isHover ? 0.0 : 0.1,
-            )!,
-            Color.lerp(
-              widget.endColor,
-              Colors.transparent,
-              isHover ? 0.0 : 0.2,
-            )!,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(color: Color.fromARGB(51, 255, 255, 255), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromARGB(isHover ? 153 : 102, 0, 0, 0),
-            blurRadius: isHover ? 18 : 12,
-            offset: const Offset(0, 6),
+    final text = AppColors.text(context);
+    final muted = AppColors.muted(context);
+    final isMobile = MediaQuery.of(context).size.width < 640;
+
+    return Column(
+      crossAxisAlignment:
+          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      children: [
+        Text(
+          StringConstants.contactMeTitle,
+          style: GoogleFonts.inter(
+            fontSize: isMobile ? 28 : 36,
+            fontWeight: FontWeight.w700,
+            color: text,
+            letterSpacing: -0.5,
           ),
-        ],
+          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+        ),
+        const SizedBox(height: 12),
+        Text(
+          StringConstants.contactMeSubtitle,
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            height: 1.6,
+            color: muted,
+          ),
+          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+        ),
+        const SizedBox(height: 32),
+
+        // Direct Contact Info list
+        _ContactRow(
+          icon: Icons.mail_outline_rounded,
+          label: ContactConstants.email,
+          onTap: () => onLaunch('mailto:${ContactConstants.email}'),
+        ),
+        const SizedBox(height: 16),
+        _ContactRow(
+          icon: Icons.phone_outlined,
+          label: ContactConstants.phone,
+          onTap: () => onLaunch('tel:${ContactConstants.phone}'),
+        ),
+        const SizedBox(height: 16),
+        _ContactRow(
+          icon: Icons.location_on_outlined,
+          label: ContactConstants.location,
+        ),
+      ],
+    );
+  }
+}
+
+class _ContactRow extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+
+  const _ContactRow({
+    required this.icon,
+    required this.label,
+    this.onTap,
+  });
+
+  @override
+  State<_ContactRow> createState() => _ContactRowState();
+}
+
+class _ContactRowState extends State<_ContactRow> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = AppColors.text(context);
+    final primaryInk = AppColors.primaryInk(context);
+
+    return MouseRegion(
+      cursor: widget.onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor(context).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                widget.icon,
+                size: 19,
+                color: primaryInk,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Text(
+              widget.label,
+              style: GoogleFonts.inter(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: (isHovered && widget.onTap != null) ? primaryInk : text,
+                decoration: (isHovered && widget.onTap != null)
+                    ? TextDecoration.underline
+                    : TextDecoration.none,
+              ),
+            ),
+          ],
+        ),
       ),
-      child: MouseRegion(
-        onEnter: (_) => setState(() => isHover = true),
-        onExit: (_) => setState(() => isHover = false),
-        child: widget.child,
+    );
+  }
+}
+
+class _SendButton extends StatefulWidget {
+  final VoidCallback onTap;
+
+  const _SendButton({required this.onTap});
+
+  @override
+  State<_SendButton> createState() => _SendButtonState();
+}
+
+class _SendButtonState extends State<_SendButton> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          transform: Matrix4.identity()
+            ..translateByDouble(0.0, isHovered ? -2.0 : 0.0, 0.0, 1.0),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF2563EB), Color(0xFF1E40AF)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF2563EB)
+                    .withValues(alpha: isHovered ? 0.45 : 0.25),
+                blurRadius: isHovered ? 20 : 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              'Send message',
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
