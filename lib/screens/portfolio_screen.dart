@@ -148,6 +148,7 @@ class _PortfolioScrollablePageState extends State<PortfolioScrollablePage> {
             onRefresh: _handleRefresh,
             color: AppColors.accent,
             backgroundColor: AppColors.card(context),
+            edgeOffset: 68,
             child: SingleChildScrollView(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),

@@ -51,5 +51,10 @@ void main() {
     expect(find.text('About me'), findsWidgets);
     expect(find.text('Skills'), findsWidgets);
     expect(find.text('Projects'), findsWidgets);
+
+    final refreshIndicatorFinder = find.byType(RefreshIndicator);
+    expect(refreshIndicatorFinder, findsOneWidget);
+    final refreshIndicator = tester.widget<RefreshIndicator>(refreshIndicatorFinder);
+    expect(refreshIndicator.edgeOffset, 68.0);
   });
 }
