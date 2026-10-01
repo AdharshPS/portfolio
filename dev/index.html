@@ -18,21 +18,108 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Adharsh PS | Flutter & Mobile Application Developer Portfolio">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Adharsh PS">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="favicon.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="me.png"/>
+  <!-- Optimized Favicon (under 50KB instead of 6MB) -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title></title>
+  <title>Adharsh PS | Flutter Developer</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Prevent blank white flash before Flutter mounts */
+    html, body {
+      background-color: #0F172A;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    #loading-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      background-color: #0F172A;
+      color: #F8FAFC;
+      transition: opacity 0.4s ease-out;
+    }
+
+    .loader-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(56, 189, 248, 0.15);
+      border-top-color: #38BDF8;
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+    }
+
+    .loader-title {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #F8FAFC;
+    }
+
+    .loader-subtitle {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #94A3B8;
+      letter-spacing: 0.25px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 <body>
+  <div id="loading-container">
+    <div class="loader-spinner"></div>
+    <div class="loader-title">Adharsh PS</div>
+    <div class="loader-subtitle">Loading portfolio...</div>
+  </div>
+
+  <script>
+    // Clean up any legacy service workers from prior deployments
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+
+    // Dismiss loading indicator as soon as Flutter renders the first frame
+    window.addEventListener('flutter-first-frame', function() {
+      const loader = document.getElementById('loading-container');
+      if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(function() {
+          loader.remove();
+        }, 400);
+      }
+    });
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
