@@ -5,6 +5,8 @@ on:
     branches:
       - dev
       - main
+    paths-ignore:
+      - 'portfolio.json'
 
 permissions:
   contents: write

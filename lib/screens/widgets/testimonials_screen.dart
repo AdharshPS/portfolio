@@ -1,7 +1,10 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
+import 'package:portfolio_new/models/portfolio_model.dart';
+import 'package:portfolio_new/services/portfolio_scope.dart';
 
 class TestimonialsScreen extends StatelessWidget {
   const TestimonialsScreen({super.key});
@@ -15,11 +18,24 @@ class TestimonialsScreen extends StatelessWidget {
 
     final crossAxisCount = isDesktop ? 3 : (isTablet ? 2 : 1);
 
+    final portfolio = PortfolioScope.dataOf(context);
+    final testimonials = portfolio.testimonials.isNotEmpty
+        ? portfolio.testimonials
+        : StringConstants.testimonials
+              .map(
+                (t) => Testimonial(quote: t.quote, name: t.name, role: t.role),
+              )
+              .toList();
+
+    final horizontalPadding = isDesktop
+        ? 60.0
+        : (isTablet ? 40.0 : (size.width < 360 ? 14.0 : 20.0));
+
     return Container(
       width: double.infinity,
       color: AppColors.surface(context),
       padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 60 : (isTablet ? 40 : 20),
+        horizontal: horizontalPadding,
         vertical: isDesktop ? 90 : (isTablet ? 70 : 50),
       ),
       child: Center(
@@ -49,24 +65,72 @@ class TestimonialsScreen extends StatelessWidget {
               const SizedBox(height: 36),
 
               // Testimonial Cards
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final spacing = 20.0;
-                  final totalSpacing = (crossAxisCount - 1) * spacing;
-                  final cardWidth = (constraints.maxWidth - totalSpacing) / crossAxisCount;
-
-                  return Wrap(
-                    spacing: spacing,
-                    runSpacing: spacing,
-                    children: StringConstants.testimonials.map((t) {
-                      return SizedBox(
-                        width: cardWidth,
-                        child: _TestimonialCard(testimonial: t),
+              if (crossAxisCount == 1)
+                Column(
+                  children: [
+                    for (var i = 0; i < testimonials.length; i++) ...[
+                      if (i > 0) const SizedBox(height: 16),
+                      _TestimonialCard(
+                        testimonial: testimonials[i],
+                        isMobile: true,
+                      ),
+                    ],
+                  ],
+                )
+              else
+                Builder(
+                  builder: (context) {
+                    final spacing = 20.0;
+                    final rows = <List<int>>[];
+                    for (
+                      var i = 0;
+                      i < testimonials.length;
+                      i += crossAxisCount
+                    ) {
+                      final end = math.min(
+                        i + crossAxisCount,
+                        testimonials.length,
                       );
-                    }).toList(),
-                  );
-                },
-              ),
+                      rows.add([for (var k = i; k < end; k++) k]);
+                    }
+
+                    return Column(
+                      children: [
+                        for (var r = 0; r < rows.length; r++) ...[
+                          if (r > 0) SizedBox(height: spacing),
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                for (
+                                  var idx = 0;
+                                  idx < rows[r].length;
+                                  idx++
+                                ) ...[
+                                  if (idx > 0) SizedBox(width: spacing),
+                                  Expanded(
+                                    child: _TestimonialCard(
+                                      testimonial: testimonials[rows[r][idx]],
+                                      isMobile: false,
+                                    ),
+                                  ),
+                                ],
+                                for (
+                                  var s = 0;
+                                  s < crossAxisCount - rows[r].length;
+                                  s++
+                                ) ...[
+                                  SizedBox(width: spacing),
+                                  const Expanded(child: SizedBox()),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
+                  },
+                ),
             ],
           ),
         ),
@@ -76,9 +140,13 @@ class TestimonialsScreen extends StatelessWidget {
 }
 
 class _TestimonialCard extends StatefulWidget {
-  final TestimonialItem testimonial;
+  final Testimonial testimonial;
+  final bool isMobile;
 
-  const _TestimonialCard({required this.testimonial});
+  const _TestimonialCard({
+    required this.testimonial,
+    this.isMobile = false,
+  });
 
   @override
   State<_TestimonialCard> createState() => _TestimonialCardState();
@@ -100,7 +168,7 @@ class _TestimonialCardState extends State<_TestimonialCard> {
         duration: const Duration(milliseconds: 200),
         transform: Matrix4.identity()
           ..translateByDouble(0.0, isHovered ? -4.0 : 0.0, 0.0, 1.0),
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(widget.isMobile ? 18 : 24),
         decoration: BoxDecoration(
           color: AppColors.card(context),
           borderRadius: BorderRadius.circular(16),
@@ -116,32 +184,40 @@ class _TestimonialCardState extends State<_TestimonialCard> {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               '“${widget.testimonial.quote}”',
               style: GoogleFonts.inter(
-                fontSize: 15,
+                fontSize: widget.isMobile ? 14 : 15,
                 height: 1.65,
                 fontStyle: FontStyle.italic,
                 color: text,
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              widget.testimonial.name,
-              style: GoogleFonts.inter(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: text,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              widget.testimonial.role,
-              style: GoogleFonts.inter(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: muted,
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.testimonial.name,
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: text,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    widget.testimonial.role,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: muted,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

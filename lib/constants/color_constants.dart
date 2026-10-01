@@ -67,8 +67,7 @@ class AppColors {
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
 
-  static Color bg(BuildContext context) =>
-      isDark(context) ? darkBg : lightBg;
+  static Color bg(BuildContext context) => isDark(context) ? darkBg : lightBg;
 
   static Color surface(BuildContext context) =>
       isDark(context) ? darkSurface : lightSurface;
@@ -92,23 +91,22 @@ class AppColors {
       isDark(context) ? darkPrimaryInk : lightPrimaryInk;
 
   static List<BoxShadow> cardShadow(BuildContext context) => [
-        BoxShadow(
-          color: isDark(context)
-              ? const Color(0x59000000)
-              : const Color(0x140F172A),
-          blurRadius: 24,
-          offset: const Offset(0, 8),
-        ),
-      ];
+    BoxShadow(
+      color: isDark(context)
+          ? const Color(0x59000000)
+          : const Color(0x140F172A),
+      blurRadius: 24,
+      offset: const Offset(0, 8),
+    ),
+  ];
 
   static List<BoxShadow> cardShadowHover(BuildContext context) => [
-        BoxShadow(
-          color: isDark(context)
-              ? const Color(0x3360A5FA)
-              : const Color(0x2E2563EB),
-          blurRadius: 36,
-          offset: const Offset(0, 16),
-        ),
-      ];
+    BoxShadow(
+      color: isDark(context)
+          ? const Color(0x3360A5FA)
+          : const Color(0x2E2563EB),
+      blurRadius: 36,
+      offset: const Offset(0, 16),
+    ),
+  ];
 }
-

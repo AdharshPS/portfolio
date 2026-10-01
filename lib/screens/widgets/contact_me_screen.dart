@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
 import 'package:portfolio_new/constants/contact_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
+import 'package:portfolio_new/services/portfolio_scope.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactMe extends StatefulWidget {
@@ -61,7 +62,9 @@ class _ContactMeState extends State<ContactMe> {
       width: double.infinity,
       color: AppColors.bg(context),
       padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 60 : (isTablet ? 40 : 20),
+        horizontal: isDesktop
+            ? 60
+            : (isTablet ? 40 : (size.width < 360 ? 14 : 20)),
         vertical: isDesktop ? 90 : (isTablet ? 70 : 50),
       ),
       child: Center(
@@ -71,13 +74,9 @@ class _ContactMeState extends State<ContactMe> {
               ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: _ContactInfo(onLaunch: _launch),
-                    ),
+                    Expanded(child: _ContactInfo(onLaunch: _launch)),
                     const SizedBox(width: 60),
-                    Expanded(
-                      child: _buildFormCard(context),
-                    ),
+                    Expanded(child: _buildFormCard(context)),
                   ],
                 )
               : Column(
@@ -95,9 +94,10 @@ class _ContactMeState extends State<ContactMe> {
   Widget _buildFormCard(BuildContext context) {
     final text = AppColors.text(context);
     final line = AppColors.line(context);
+    final isMobile = MediaQuery.of(context).size.width < 640;
 
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: EdgeInsets.all(isMobile ? 20 : 28),
       decoration: BoxDecoration(
         color: AppColors.card(context),
         borderRadius: BorderRadius.circular(18),
@@ -106,8 +106,9 @@ class _ContactMeState extends State<ContactMe> {
       ),
       child: Form(
         key: _formKey,
-        autovalidateMode:
-            _submitted ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled,
+        autovalidateMode: _submitted
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -150,7 +151,10 @@ class _ContactMeState extends State<ContactMe> {
               style: GoogleFonts.inter(fontSize: 15, color: text),
               decoration: _inputDecoration(context, 'name@example.com'),
               validator: (val) {
-                if (val == null || !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(val.trim())) {
+                if (val == null ||
+                    !RegExp(
+                      r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+                    ).hasMatch(val.trim())) {
                   return 'Enter a valid email address.';
                 }
                 return null;
@@ -172,7 +176,10 @@ class _ContactMeState extends State<ContactMe> {
               controller: _messageController,
               maxLines: 4,
               style: GoogleFonts.inter(fontSize: 15, color: text),
-              decoration: _inputDecoration(context, 'Tell me about your project...'),
+              decoration: _inputDecoration(
+                context,
+                'Tell me about your project...',
+              ),
               validator: (val) {
                 if (val == null || val.trim().length < 10) {
                   return 'Write at least 10 characters.';
@@ -189,7 +196,10 @@ class _ContactMeState extends State<ContactMe> {
             if (_statusMessage != null) ...[
               const SizedBox(height: 16),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF15803D).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
@@ -262,10 +272,17 @@ class _ContactInfo extends StatelessWidget {
     final text = AppColors.text(context);
     final muted = AppColors.muted(context);
     final isMobile = MediaQuery.of(context).size.width < 640;
+    final portfolio = PortfolioScope.dataOf(context);
+    final profile = portfolio.profile;
+
+    final email = profile.email ?? ContactConstants.email;
+    final phone = profile.phone ?? ContactConstants.phone;
+    final location = profile.location ?? ContactConstants.location;
 
     return Column(
-      crossAxisAlignment:
-          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment: isMobile
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       children: [
         Text(
           StringConstants.contactMeTitle,
@@ -280,32 +297,31 @@ class _ContactInfo extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           StringConstants.contactMeSubtitle,
-          style: GoogleFonts.inter(
-            fontSize: 16,
-            height: 1.6,
-            color: muted,
-          ),
+          style: GoogleFonts.inter(fontSize: 16, height: 1.6, color: muted),
           textAlign: isMobile ? TextAlign.center : TextAlign.start,
         ),
         const SizedBox(height: 32),
 
-        // Direct Contact Info list
-        _ContactRow(
-          icon: Icons.mail_outline_rounded,
-          label: ContactConstants.email,
-          onTap: () => onLaunch('mailto:${ContactConstants.email}'),
-        ),
-        const SizedBox(height: 16),
-        _ContactRow(
-          icon: Icons.phone_outlined,
-          label: ContactConstants.phone,
-          onTap: () => onLaunch('tel:${ContactConstants.phone}'),
-        ),
-        const SizedBox(height: 16),
-        _ContactRow(
-          icon: Icons.location_on_outlined,
-          label: ContactConstants.location,
-        ),
+        // Direct Contact Info list (Empty string or null means absent: hide row)
+        if (email.trim().isNotEmpty) ...[
+          _ContactRow(
+            icon: Icons.mail_outline_rounded,
+            label: email.trim(),
+            onTap: () => onLaunch('mailto:${email.trim()}'),
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (phone.trim().isNotEmpty) ...[
+          _ContactRow(
+            icon: Icons.phone_outlined,
+            label: phone.trim(),
+            onTap: () => onLaunch('tel:${phone.trim()}'),
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (location.trim().isNotEmpty) ...[
+          _ContactRow(icon: Icons.location_on_outlined, label: location.trim()),
+        ],
       ],
     );
   }
@@ -316,11 +332,7 @@ class _ContactRow extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
 
-  const _ContactRow({
-    required this.icon,
-    required this.label,
-    this.onTap,
-  });
+  const _ContactRow({required this.icon, required this.label, this.onTap});
 
   @override
   State<_ContactRow> createState() => _ContactRowState();
@@ -335,7 +347,9 @@ class _ContactRowState extends State<_ContactRow> {
     final primaryInk = AppColors.primaryInk(context);
 
     return MouseRegion(
-      cursor: widget.onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      cursor: widget.onTap != null
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: GestureDetector(
@@ -350,22 +364,21 @@ class _ContactRowState extends State<_ContactRow> {
                 color: AppColors.primaryColor(context).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                widget.icon,
-                size: 19,
-                color: primaryInk,
-              ),
+              child: Icon(widget.icon, size: 19, color: primaryInk),
             ),
             const SizedBox(width: 14),
-            Text(
-              widget.label,
-              style: GoogleFonts.inter(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: (isHovered && widget.onTap != null) ? primaryInk : text,
-                decoration: (isHovered && widget.onTap != null)
-                    ? TextDecoration.underline
-                    : TextDecoration.none,
+            Flexible(
+              child: Text(
+                widget.label,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: (isHovered && widget.onTap != null) ? primaryInk : text,
+                  decoration: (isHovered && widget.onTap != null)
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
+                ),
               ),
             ),
           ],
@@ -409,8 +422,9 @@ class _SendButtonState extends State<_SendButton> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF2563EB)
-                    .withValues(alpha: isHovered ? 0.45 : 0.25),
+                color: const Color(
+                  0xFF2563EB,
+                ).withValues(alpha: isHovered ? 0.45 : 0.25),
                 blurRadius: isHovered ? 20 : 12,
                 offset: const Offset(0, 4),
               ),

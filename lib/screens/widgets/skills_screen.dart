@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
 import 'package:portfolio_new/constants/skill_constants.dart';
+import 'package:portfolio_new/models/portfolio_model.dart';
+import 'package:portfolio_new/services/portfolio_scope.dart';
 
 class SkillsScreen extends StatelessWidget {
   const SkillsScreen({super.key});
@@ -51,21 +53,29 @@ class SkillsScreen extends StatelessWidget {
               // Responsive Skills Grid
               LayoutBuilder(
                 builder: (context, constraints) {
-                  final entries = SkillConstants.skills.entries.toList();
+                  final portfolio = PortfolioScope.dataOf(context);
+                  final categories = portfolio.skills.isNotEmpty
+                      ? portfolio.skills
+                      : SkillConstants.skills.entries
+                            .map(
+                              (e) => SkillCategory(name: e.key, items: e.value),
+                            )
+                            .toList();
+
                   final cardWidth = crossAxisCount == 1
                       ? constraints.maxWidth
                       : (constraints.maxWidth - (crossAxisCount - 1) * 20) /
-                          crossAxisCount;
+                            crossAxisCount;
 
                   return Wrap(
                     spacing: 20,
                     runSpacing: 20,
-                    children: entries.map((entry) {
+                    children: categories.map((cat) {
                       return SizedBox(
                         width: cardWidth,
                         child: _SkillCategoryCard(
-                          title: entry.key,
-                          skills: entry.value,
+                          title: cat.name,
+                          skills: cat.items,
                         ),
                       );
                     }).toList(),
@@ -84,10 +94,7 @@ class _SkillCategoryCard extends StatefulWidget {
   final String title;
   final List<String> skills;
 
-  const _SkillCategoryCard({
-    required this.title,
-    required this.skills,
-  });
+  const _SkillCategoryCard({required this.title, required this.skills});
 
   @override
   State<_SkillCategoryCard> createState() => _SkillCategoryCardState();
@@ -159,10 +166,7 @@ class _SkillChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: primary.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(99),
-        border: Border.all(
-          color: primary.withValues(alpha: 0.22),
-          width: 1,
-        ),
+        border: Border.all(color: primary.withValues(alpha: 0.22), width: 1),
       ),
       child: Text(
         label,

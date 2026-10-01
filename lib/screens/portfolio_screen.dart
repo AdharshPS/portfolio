@@ -9,12 +9,15 @@ import 'package:portfolio_new/screens/widgets/nav_bar.dart';
 import 'package:portfolio_new/screens/widgets/project_screen.dart';
 import 'package:portfolio_new/screens/widgets/skills_screen.dart';
 import 'package:portfolio_new/screens/widgets/testimonials_screen.dart';
+import 'package:portfolio_new/services/portfolio_scope.dart';
+import 'package:portfolio_new/services/portfolio_state.dart';
 
 class PortfolioScrollablePage extends StatefulWidget {
   const PortfolioScrollablePage({super.key});
 
   @override
-  State<PortfolioScrollablePage> createState() => _PortfolioScrollablePageState();
+  State<PortfolioScrollablePage> createState() =>
+      _PortfolioScrollablePageState();
 }
 
 class _PortfolioScrollablePageState extends State<PortfolioScrollablePage> {
@@ -106,72 +109,94 @@ class _PortfolioScrollablePageState extends State<PortfolioScrollablePage> {
     );
   }
 
+  Future<void> _handleRefresh() async {
+    final notifier = PortfolioScope.of(context);
+    final success = await notifier.refresh();
+    if (!mounted) return;
+    if (!success) {
+      final error =
+          notifier.state.errorMessage ?? 'Unable to refresh portfolio.';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Portfolio content updated.'),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final state = PortfolioScope.stateOf(context);
+    final isRefreshing = state.status == PortfolioStatus.refreshing;
+
     return Scaffold(
       backgroundColor: AppColors.bg(context),
       body: Stack(
         children: [
-          // Main Scrollable Page
-          SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Spacer for sticky navbar
-                const SizedBox(height: 68),
+          // Main Scrollable Page with pull-to-refresh
+          RefreshIndicator(
+            onRefresh: _handleRefresh,
+            color: AppColors.accent,
+            backgroundColor: AppColors.card(context),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Spacer for sticky navbar
+                  const SizedBox(height: 68),
 
-                // Hero Section
-                Container(
-                  key: _homeKey,
-                  child: HomeScreen(
-                    onViewProjectsTap: () => _scrollToKey(_projectsKey),
+                  // Hero Section
+                  Container(
+                    key: _homeKey,
+                    child: HomeScreen(
+                      onViewProjectsTap: () => _scrollToKey(_projectsKey),
+                    ),
                   ),
-                ),
 
-                // About Me Section
-                Container(
-                  key: _aboutKey,
-                  child: const AboutMe(),
-                ),
+                  // About Me Section
+                  Container(key: _aboutKey, child: const AboutMe()),
 
-                // Skills Section
-                Container(
-                  key: _skillsKey,
-                  child: const SkillsScreen(),
-                ),
+                  // Skills Section
+                  Container(key: _skillsKey, child: const SkillsScreen()),
 
-                // Projects Section
-                Container(
-                  key: _projectsKey,
-                  child: const ProjectsScreen(),
-                ),
+                  // Projects Section
+                  Container(key: _projectsKey, child: const ProjectsScreen()),
 
-                // Experience Section
-                Container(
-                  key: _experienceKey,
-                  child: const ExperienceScreen(),
-                ),
+                  // Experience Section
+                  Container(
+                    key: _experienceKey,
+                    child: const ExperienceScreen(),
+                  ),
 
-                // Testimonials Section
-                const TestimonialsScreen(),
+                  // Testimonials Section
+                  const TestimonialsScreen(),
 
-                // Contact Me Section
-                Container(
-                  key: _contactKey,
-                  child: const ContactMe(),
-                ),
+                  // Contact Me Section
+                  Container(key: _contactKey, child: const ContactMe()),
 
-                // Footer
-                FooterWidget(
-                  onHomeTap: () => _scrollToKey(_homeKey),
-                  onAboutTap: () => _scrollToKey(_aboutKey),
-                  onSkillsTap: () => _scrollToKey(_skillsKey),
-                  onProjectsTap: () => _scrollToKey(_projectsKey),
-                  onExperienceTap: () => _scrollToKey(_experienceKey),
-                  onContactTap: () => _scrollToKey(_contactKey),
-                ),
-              ],
+                  // Footer
+                  FooterWidget(
+                    onHomeTap: () => _scrollToKey(_homeKey),
+                    onAboutTap: () => _scrollToKey(_aboutKey),
+                    onSkillsTap: () => _scrollToKey(_skillsKey),
+                    onProjectsTap: () => _scrollToKey(_projectsKey),
+                    onExperienceTap: () => _scrollToKey(_experienceKey),
+                    onContactTap: () => _scrollToKey(_contactKey),
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -182,6 +207,8 @@ class _PortfolioScrollablePageState extends State<PortfolioScrollablePage> {
             right: 0,
             child: NavBar(
               activeSection: _activeSection,
+              isRefreshing: isRefreshing,
+              onRefreshTap: _handleRefresh,
               onHomeTap: () => _scrollToKey(_homeKey),
               onAboutTap: () => _scrollToKey(_aboutKey),
               onSkillsTap: () => _scrollToKey(_skillsKey),

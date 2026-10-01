@@ -5,4 +5,3 @@ class ContactConstants {
   static const String github = 'https://github.com/AdharshPS';
   static const String linkedin = 'https://www.linkedin.com/in/adharshzps/';
 }
-

@@ -1,22 +1,29 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-// For web
-// ignore: avoid_web_libraries_in_flutter
-import 'package:web/web.dart' as web;
-
-// For mobile/desktop
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:portfolio_new/models/portfolio_model.dart';
+import 'package:portfolio_new/services/web_download.dart';
 
-Future<void> downloadCV(BuildContext context) async {
-  const url =
-      'https://drive.google.com/uc?export=download&id=1RFc9qpkNY7QelQ_2ZleT2xBEgNiuv6DG';
+Future<void> downloadCV(BuildContext context, {CvInfo? cvInfo}) async {
+  final url = cvInfo?.downloadUrl.trim();
+  final fileName = (cvInfo != null && cvInfo.fileName.trim().isNotEmpty)
+      ? cvInfo.fileName.trim()
+      : 'Adharsh_PS_Flutter_Developer_Resume.pdf';
+
+  if (url == null || url.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('CV download link is currently unavailable.'),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
+    return;
+  }
 
   try {
     if (kIsWeb) {
-      // Show loader
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -25,24 +32,16 @@ Future<void> downloadCV(BuildContext context) async {
         ),
       );
 
-      await Future.delayed(const Duration(seconds: 2)); // fake wait
+      await Future.delayed(const Duration(seconds: 1));
 
-      // ✅ Trigger download
-      final anchor = web.document.createElement('a') as web.HTMLAnchorElement
-        ..href = url
-        ..download = 'AdharshCV.pdf'
-        ..style.display = 'none';
+      triggerWebDownload(url, fileName);
 
-      web.document.body!.append(anchor);
-      anchor.click();
-      anchor.remove();
       if (!context.mounted) return;
       Navigator.pop(context);
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('CV download started')));
     } else {
-      // ✅ Mobile/Desktop download
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -63,7 +62,7 @@ Future<void> downloadCV(BuildContext context) async {
         dir = await getDownloadsDirectory() ?? await getTemporaryDirectory();
       }
 
-      final filePath = '${dir.path}/AdharshPSCV.pdf';
+      final filePath = '${dir.path}/$fileName';
       final dio = Dio();
 
       await dio.download(url, filePath);
@@ -77,9 +76,13 @@ Future<void> downloadCV(BuildContext context) async {
     }
   } catch (e) {
     debugPrint('❌ Error downloading CV: $e');
-    if (Navigator.canPop(context)) Navigator.pop(context);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Error downloading CV: $e')));
+    if (context.mounted && Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error downloading CV: $e')));
+    }
   }
 }

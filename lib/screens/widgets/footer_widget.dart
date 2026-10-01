@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
+import 'package:portfolio_new/services/portfolio_scope.dart';
 
 class FooterWidget extends StatelessWidget {
   final VoidCallback onHomeTap;
@@ -24,17 +25,19 @@ class FooterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final year = DateTime.now().year;
-    final isDesktop = MediaQuery.of(context).size.width >= 640;
+    final isDesktop = MediaQuery.of(context).size.width >= 900;
     final muted = AppColors.muted(context);
     final line = AppColors.line(context);
+    final portfolio = PortfolioScope.dataOf(context);
+    final name = portfolio.profile.name.isNotEmpty
+        ? portfolio.profile.name
+        : StringConstants.fullName;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: AppColors.bg(context),
-        border: Border(
-          top: BorderSide(color: line, width: 1),
-        ),
+        border: Border(top: BorderSide(color: line, width: 1)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       child: Center(
@@ -44,20 +47,23 @@ class FooterWidget extends StatelessWidget {
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '© $year ${StringConstants.fullName}. Built with care.',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: muted,
+                    Flexible(
+                      child: Text(
+                        '© $year $name. Built with care.',
+                        style: GoogleFonts.inter(fontSize: 14, color: muted),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    _FooterNavLinks(
-                      onHomeTap: onHomeTap,
-                      onAboutTap: onAboutTap,
-                      onSkillsTap: onSkillsTap,
-                      onProjectsTap: onProjectsTap,
-                      onExperienceTap: onExperienceTap,
-                      onContactTap: onContactTap,
+                    const SizedBox(width: 24),
+                    Flexible(
+                      child: _FooterNavLinks(
+                        onHomeTap: onHomeTap,
+                        onAboutTap: onAboutTap,
+                        onSkillsTap: onSkillsTap,
+                        onProjectsTap: onProjectsTap,
+                        onExperienceTap: onExperienceTap,
+                        onContactTap: onContactTap,
+                      ),
                     ),
                   ],
                 )
@@ -73,11 +79,9 @@ class FooterWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      '© $year ${StringConstants.fullName}. Built with care.',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: muted,
-                      ),
+                      '© $year $name. Built with care.',
+                      style: GoogleFonts.inter(fontSize: 14, color: muted),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),

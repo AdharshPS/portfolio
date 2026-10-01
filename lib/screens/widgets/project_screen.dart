@@ -2,7 +2,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
+import 'package:portfolio_new/constants/image_constants.dart';
 import 'package:portfolio_new/constants/project_constants.dart';
+import 'package:portfolio_new/models/portfolio_model.dart';
+import 'package:portfolio_new/services/portfolio_scope.dart';
+import 'package:portfolio_new/widgets/portfolio_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProjectsScreen extends StatefulWidget {
@@ -27,13 +31,41 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     final isTablet = size.width >= 640 && size.width < 1024;
     final isMobile = size.width < 640;
 
-    final categories = ['All', 'Open Source', 'Consumer', 'UI/UX'];
+    final portfolio = PortfolioScope.dataOf(context);
+    final allProjects = portfolio.projects.isNotEmpty
+        ? portfolio.projects
+        : ProjectConstants.projects.map((p) {
+            return Project(
+              title: p.title,
+              description: p.description,
+              type: p.category,
+              tags: p.tags,
+              github: p.gitHubUrl,
+              deploy: const Deploy.empty(),
+              thumbnail: p.imagePath,
+              accentColorHex: '#2563EB',
+              accentColor: p.accentColor,
+            );
+          }).toList();
+
+    final distinctTypes = allProjects
+        .map((p) => p.type)
+        .where((t) => t.trim().isNotEmpty)
+        .toSet()
+        .toList();
+    final categories = ['All', ...distinctTypes];
+
+    if (!categories.contains(selectedCategory)) {
+      selectedCategory = 'All';
+    }
 
     final filteredProjects = selectedCategory == 'All'
-        ? ProjectConstants.projects
-        : ProjectConstants.projects
-            .where((p) => p.category.toLowerCase() == selectedCategory.toLowerCase())
-            .toList();
+        ? allProjects
+        : allProjects
+              .where(
+                (p) => p.type.toLowerCase() == selectedCategory.toLowerCase(),
+              )
+              .toList();
 
     final crossAxisCount = isDesktop ? 3 : (isTablet ? 2 : 1);
     final horizontalPadding = isDesktop ? 60.0 : (isTablet ? 40.0 : 20.0);
@@ -42,7 +74,9 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
 
     final spacing = 20.0;
     final totalSpacing = (crossAxisCount - 1) * spacing;
-    final cardWidth = crossAxisCount > 0 ? (contentWidth - totalSpacing) / crossAxisCount : contentWidth;
+    final cardWidth = crossAxisCount > 0
+        ? (contentWidth - totalSpacing) / crossAxisCount
+        : contentWidth;
 
     return Container(
       width: double.infinity,
@@ -112,10 +146,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                   children: filteredProjects.map((project) {
                     return SizedBox(
                       width: cardWidth,
-                      child: _ProjectCard(
-                        project: project,
-                        onLaunch: _launch,
-                      ),
+                      child: _ProjectCard(project: project, onLaunch: _launch),
                     );
                   }).toList(),
                 ),
@@ -163,9 +194,7 @@ class _FilterPill extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: isSelected
-                ? Colors.white
-                : AppColors.text(context),
+            color: isSelected ? Colors.white : AppColors.text(context),
           ),
         ),
       ),
@@ -174,13 +203,10 @@ class _FilterPill extends StatelessWidget {
 }
 
 class _ProjectCard extends StatefulWidget {
-  final ProjectModel project;
+  final Project project;
   final Function(String) onLaunch;
 
-  const _ProjectCard({
-    required this.project,
-    required this.onLaunch,
-  });
+  const _ProjectCard({required this.project, required this.onLaunch});
 
   @override
   State<_ProjectCard> createState() => _ProjectCardState();
@@ -238,7 +264,10 @@ class _ProjectCardState extends State<_ProjectCard> {
                   Container(
                     width: 76,
                     height: 126,
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xF2FFFFFF),
                       borderRadius: BorderRadius.circular(14),
@@ -270,7 +299,9 @@ class _ProjectCardState extends State<_ProjectCard> {
                           height: 6,
                           width: 42,
                           decoration: BoxDecoration(
-                            color: widget.project.accentColor.withValues(alpha: 0.4),
+                            color: widget.project.accentColor.withValues(
+                              alpha: 0.4,
+                            ),
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -279,16 +310,21 @@ class _ProjectCardState extends State<_ProjectCard> {
                           child: Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
-                              color: widget.project.accentColor.withValues(alpha: 0.18),
+                              color: widget.project.accentColor.withValues(
+                                alpha: 0.18,
+                              ),
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: widget.project.imagePath.isNotEmpty
+                            child: widget.project.thumbnail.isNotEmpty
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(4),
-                                    child: Image.asset(
-                                      widget.project.imagePath,
+                                    child: PortfolioImage(
+                                      imagePath: widget.project.thumbnail,
+                                      fallbackAsset: ImageConstants.notesImage,
+                                      width: double.infinity,
+                                      height: double.infinity,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                                      fallbackWidget: const SizedBox.shrink(),
                                     ),
                                   )
                                 : null,
@@ -303,13 +339,16 @@ class _ProjectCardState extends State<_ProjectCard> {
                     top: 12,
                     right: 12,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.black.withValues(alpha: 0.6),
                         borderRadius: BorderRadius.circular(99),
                       ),
                       child: Text(
-                        widget.project.category,
+                        widget.project.type,
                         style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -355,9 +394,14 @@ class _ProjectCardState extends State<_ProjectCard> {
                     runSpacing: 6,
                     children: widget.project.tags.map((tag) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryColor(context).withValues(alpha: 0.1),
+                          color: AppColors.primaryColor(
+                            context,
+                          ).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(99),
                         ),
                         child: Text(
@@ -373,7 +417,7 @@ class _ProjectCardState extends State<_ProjectCard> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Links row
+                  // Links row (Empty string or null means absent: hide that link or button)
                   Wrap(
                     spacing: 14,
                     runSpacing: 8,

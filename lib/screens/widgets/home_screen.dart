@@ -5,6 +5,7 @@ import 'package:portfolio_new/constants/color_constants.dart';
 import 'package:portfolio_new/constants/contact_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
 import 'package:portfolio_new/services/download_cv_service.dart';
+import 'package:portfolio_new/services/portfolio_scope.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -32,7 +33,9 @@ class HomeScreen extends StatelessWidget {
           center: const Alignment(0.8, -0.6),
           radius: 1.2,
           colors: [
-            AppColors.primaryColor(context).withValues(alpha: isDark ? 0.18 : 0.09),
+            AppColors.primaryColor(
+              context,
+            ).withValues(alpha: isDark ? 0.18 : 0.09),
             Colors.transparent,
           ],
         ),
@@ -56,10 +59,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 48),
-                    const Expanded(
-                      flex: 8,
-                      child: _PhoneMockup(),
-                    ),
+                    const Expanded(flex: 8, child: _PhoneMockup()),
                   ],
                 )
               : Column(
@@ -82,10 +82,7 @@ class _HeroContent extends StatelessWidget {
   final VoidCallback? onViewProjectsTap;
   final Function(String) onLaunch;
 
-  const _HeroContent({
-    required this.onViewProjectsTap,
-    required this.onLaunch,
-  });
+  const _HeroContent({required this.onViewProjectsTap, required this.onLaunch});
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +90,32 @@ class _HeroContent extends StatelessWidget {
     final primaryInk = AppColors.primaryInk(context);
     final text = AppColors.text(context);
     final muted = AppColors.muted(context);
+    final portfolio = PortfolioScope.dataOf(context);
+    final profile = portfolio.profile;
+
+    final greeting = profile.headlineGreeting.isNotEmpty
+        ? profile.headlineGreeting
+        : StringConstants.heroGreeting;
+    final name = profile.name.isNotEmpty
+        ? profile.name
+        : StringConstants.fullName;
+    final role = profile.role.isNotEmpty ? profile.role : StringConstants.role;
+    final tagline = profile.tagline.isNotEmpty
+        ? profile.tagline
+        : StringConstants.tagline;
+
+    final githubUrl = profile.github ?? ContactConstants.github;
+    final linkedinUrl = profile.linkedin ?? ContactConstants.linkedin;
+    final emailAddress = profile.email ?? ContactConstants.email;
 
     return Column(
-      crossAxisAlignment:
-          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment: isMobile
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       children: [
         // Greeting // hello, world
         Text(
-          StringConstants.heroGreeting,
+          greeting,
           style: GoogleFonts.jetBrainsMono(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -123,12 +138,10 @@ class _HeroContent extends StatelessWidget {
               color: text,
             ),
             children: [
-              const TextSpan(text: "I'm Adharsh P S,\n"),
+              TextSpan(text: "I'm $name,\n"),
               TextSpan(
-                text: "Flutter Mobile Developer",
-                style: TextStyle(
-                  color: primaryInk,
-                ),
+                text: role,
+                style: TextStyle(color: primaryInk),
               ),
             ],
           ),
@@ -139,7 +152,7 @@ class _HeroContent extends StatelessWidget {
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 540),
           child: Text(
-            StringConstants.tagline,
+            tagline,
             style: GoogleFonts.inter(
               fontSize: isMobile ? 16 : 18,
               height: 1.6,
@@ -164,33 +177,36 @@ class _HeroContent extends StatelessWidget {
             _ButtonGhost(
               label: 'Download resume',
               icon: Icons.file_download_outlined,
-              onTap: () => downloadCV(context),
+              onTap: () => downloadCV(context, cvInfo: profile.cv),
             ),
           ],
         ),
         const SizedBox(height: 28),
 
-        // Social pills
+        // Social pills (hide if absent or empty)
         Wrap(
           spacing: 10,
           runSpacing: 10,
           alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
           children: [
-            _SocialPill(
-              label: 'GitHub',
-              icon: Icons.code_rounded,
-              onTap: () => onLaunch(ContactConstants.github),
-            ),
-            _SocialPill(
-              label: 'LinkedIn',
-              icon: Icons.link_rounded,
-              onTap: () => onLaunch(ContactConstants.linkedin),
-            ),
-            _SocialPill(
-              label: 'Email',
-              icon: Icons.mail_outline_rounded,
-              onTap: () => onLaunch('mailto:${ContactConstants.email}'),
-            ),
+            if (githubUrl.trim().isNotEmpty)
+              _SocialPill(
+                label: 'GitHub',
+                icon: Icons.code_rounded,
+                onTap: () => onLaunch(githubUrl.trim()),
+              ),
+            if (linkedinUrl.trim().isNotEmpty)
+              _SocialPill(
+                label: 'LinkedIn',
+                icon: Icons.link_rounded,
+                onTap: () => onLaunch(linkedinUrl.trim()),
+              ),
+            if (emailAddress.trim().isNotEmpty)
+              _SocialPill(
+                label: 'Email',
+                icon: Icons.mail_outline_rounded,
+                onTap: () => onLaunch('mailto:${emailAddress.trim()}'),
+              ),
           ],
         ),
       ],
@@ -439,7 +455,6 @@ class _ButtonPrimaryState extends State<_ButtonPrimary> {
           duration: const Duration(milliseconds: 180),
           transform: Matrix4.identity()
             ..translateByDouble(0.0, isHovered ? -2.0 : 0.0, 0.0, 1.0),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Color(0xFF2563EB), Color(0xFF1E40AF)],
@@ -449,22 +464,30 @@ class _ButtonPrimaryState extends State<_ButtonPrimary> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF2563EB)
-                    .withValues(alpha: isHovered ? 0.45 : 0.25),
+                color: const Color(
+                  0xFF2563EB,
+                ).withValues(alpha: isHovered ? 0.45 : 0.25),
                 blurRadius: isHovered ? 24 : 14,
                 offset: const Offset(0, 6),
               ),
             ],
           ),
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width < 380 ? 16 : 24,
+            vertical: 14,
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                widget.label,
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+              Flexible(
+                child: Text(
+                  widget.label,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -512,24 +535,27 @@ class _ButtonGhostState extends State<_ButtonGhost> {
           duration: const Duration(milliseconds: 180),
           transform: Matrix4.identity()
             ..translateByDouble(0.0, isHovered ? -2.0 : 0.0, 0.0, 1.0),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width < 380 ? 16 : 24,
+            vertical: 14,
+          ),
           decoration: BoxDecoration(
             color: isHovered ? surface : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isHovered ? primary : line,
-              width: 1.5,
-            ),
+            border: Border.all(color: isHovered ? primary : line, width: 1.5),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                widget.label,
-                style: GoogleFonts.inter(
-                  color: text,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+              Flexible(
+                child: Text(
+                  widget.label,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: text,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -579,10 +605,7 @@ class _SocialPillState extends State<_SocialPill> {
           decoration: BoxDecoration(
             color: isHovered ? surface : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: isHovered ? primary : line,
-              width: 1.2,
-            ),
+            border: Border.all(color: isHovered ? primary : line, width: 1.2),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

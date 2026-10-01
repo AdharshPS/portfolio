@@ -13,9 +13,7 @@ class ProjectConstants {
       tags: const ['Flutter', 'Hive', 'AI Integration', 'CI/CD', 'Clean Arch'],
       accentColor: const Color(0xFF2563EB),
       gradient: const [Color(0xFFBFDBFE), Color(0xFF93C5FD)],
-      links: const {
-        'GitHub': 'https://github.com/AdharshPS/notes',
-      },
+      links: const {'GitHub': 'https://github.com/AdharshPS/notes'},
     ),
     ProjectModel(
       title: 'Paws (Pet Marketplace)',
@@ -27,9 +25,7 @@ class ProjectConstants {
       tags: const ['Flutter', 'Firebase Auth', 'Firestore', 'Cloud Storage'],
       accentColor: const Color(0xFFF97316),
       gradient: const [Color(0xFFFED7AA), Color(0xFFFDBA74)],
-      links: const {
-        'GitHub': 'https://github.com/AdharshPS/paws_app',
-      },
+      links: const {'GitHub': 'https://github.com/AdharshPS/paws_app'},
     ),
     ProjectModel(
       title: 'Netflix UI Clone',
@@ -38,12 +34,15 @@ class ProjectConstants {
       gitHubUrl: 'https://github.com/AdharshPS/Netflix',
       imagePath: ImageConstants.netflixImage,
       category: 'UI/UX',
-      tags: const ['Flutter', 'Responsive Layout', 'Micro-animations', 'Clean UI'],
+      tags: const [
+        'Flutter',
+        'Responsive Layout',
+        'Micro-animations',
+        'Clean UI',
+      ],
       accentColor: const Color(0xFFEF4444),
       gradient: const [Color(0xFFFECDD3), Color(0xFFFDA4AF)],
-      links: const {
-        'GitHub': 'https://github.com/AdharshPS/Netflix',
-      },
+      links: const {'GitHub': 'https://github.com/AdharshPS/Netflix'},
     ),
   ];
 }
@@ -71,4 +70,3 @@ class ProjectModel {
     required this.links,
   });
 }
-

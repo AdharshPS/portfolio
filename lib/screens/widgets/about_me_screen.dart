@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
 import 'package:portfolio_new/constants/image_constants.dart';
 import 'package:portfolio_new/constants/text_constants.dart';
+import 'package:portfolio_new/services/portfolio_scope.dart';
+import 'package:portfolio_new/widgets/portfolio_image.dart';
 
 class AboutMe extends StatelessWidget {
   const AboutMe({super.key});
@@ -29,18 +31,16 @@ class AboutMe extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Avatar
-                    _AvatarBlock(),
+                    const _AvatarBlock(),
                     const SizedBox(width: 60),
 
                     // Bio & Stats
-                    Expanded(
-                      child: _AboutContent(isMobile: false),
-                    ),
+                    const Expanded(child: _AboutContent(isMobile: false)),
                   ],
                 )
               : Column(
                   children: [
-                    _AvatarBlock(),
+                    const _AvatarBlock(),
                     const SizedBox(height: 36),
                     _AboutContent(isMobile: isMobile),
                   ],
@@ -51,9 +51,21 @@ class AboutMe extends StatelessWidget {
   }
 }
 
+String _getInitials(String name) {
+  final parts = name.trim().split(RegExp(r'\s+'));
+  if (parts.isEmpty || parts[0].isEmpty) return 'AP';
+  if (parts.length == 1) return parts[0][0].toUpperCase();
+  return '${parts[0][0]}${parts[parts.length - 1][0]}'.toUpperCase();
+}
+
 class _AvatarBlock extends StatelessWidget {
+  const _AvatarBlock();
+
   @override
   Widget build(BuildContext context) {
+    final portfolio = PortfolioScope.dataOf(context);
+    final profile = portfolio.profile;
+
     return Container(
       width: 220,
       height: 220,
@@ -75,14 +87,17 @@ class _AvatarBlock extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
-        child: Image.asset(
-          ImageConstants.myImage,
+        child: PortfolioImage(
+          imagePath: profile.avatarImage,
+          fallbackAsset: ImageConstants.myImage,
+          width: 212,
+          height: 212,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Container(
+          fallbackWidget: Container(
             color: const Color(0xFF1E293B),
             child: Center(
               child: Text(
-                'AP',
+                _getInitials(profile.name),
                 style: GoogleFonts.inter(
                   fontSize: 56,
                   fontWeight: FontWeight.w800,
@@ -105,10 +120,24 @@ class _AboutContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = AppColors.text(context);
     final muted = AppColors.muted(context);
+    final portfolio = PortfolioScope.dataOf(context);
+    final about = portfolio.about;
+
+    final intro = about.intro.isNotEmpty
+        ? about.intro
+        : StringConstants.aboutMeIntro;
+    final journey = about.journey.isNotEmpty
+        ? about.journey
+        : StringConstants.aboutMeIntroJourney;
+
+    final statsList = portfolio.stats.isNotEmpty
+        ? portfolio.stats.map((s) => [s.value, s.label]).toList()
+        : StringConstants.stats;
 
     return Column(
-      crossAxisAlignment:
-          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment: isMobile
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       children: [
         Text(
           'About me',
@@ -121,7 +150,7 @@ class _AboutContent extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          StringConstants.aboutMeIntro,
+          intro,
           style: GoogleFonts.inter(
             fontSize: isMobile ? 15 : 16.5,
             height: 1.7,
@@ -131,7 +160,7 @@ class _AboutContent extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          StringConstants.aboutMeIntroJourney,
+          journey,
           style: GoogleFonts.inter(
             fontSize: isMobile ? 14 : 15.5,
             height: 1.7,
@@ -141,11 +170,11 @@ class _AboutContent extends StatelessWidget {
         ),
         const SizedBox(height: 28),
 
-        // Verified Stats Cards (from code)
+        // Stats Cards
         LayoutBuilder(
           builder: (context, constraints) {
             return Row(
-              children: StringConstants.stats.map((item) {
+              children: statsList.map((item) {
                 return Expanded(
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 5),
