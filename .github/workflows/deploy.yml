@@ -5,6 +5,8 @@ on:
     branches:
       - dev
       - main
+    tags:
+      - 'v*.*.*'
     paths-ignore:
       - 'portfolio.json'
 
@@ -28,6 +30,7 @@ jobs:
       - run: flutter config --enable-web
       - run: flutter clean
       - run: flutter pub get
+      - run: flutter test
 
       - name: Build DEV
         run: |
@@ -48,7 +51,7 @@ jobs:
 
 
   deploy-prod:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment: prod
 
@@ -63,6 +66,7 @@ jobs:
       - run: flutter config --enable-web
       - run: flutter clean
       - run: flutter pub get
+      - run: flutter test
 
       - name: Build PROD
         run: |

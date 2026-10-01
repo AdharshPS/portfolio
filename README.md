@@ -62,7 +62,7 @@ Open [portfolio.json](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/portf
 Deployment is fully automated using **GitHub Actions** defined in [.github/workflows/deploy.yml](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/.github/workflows/deploy.yml).
 
 ### Trigger Keyword in CI/CD: `push`
-The workflow is triggered automatically on **`push`** to specific target branches:
+The workflow is triggered automatically on **`push`** to specific target branches and release tags:
 
 ```yaml
 on:
@@ -70,16 +70,18 @@ on:
     branches:
       - dev
       - main
+    tags:
+      - 'v*.*.*'
     paths-ignore:
       - 'portfolio.json'
 ```
 
 ### Environments & Deployment Commands
 
-| Environment | Target Branch | Trigger Command | Base URL | GitHub Pages Destination |
+| Environment | Target Branch / Tag | Trigger Command | Base URL | GitHub Pages Destination |
 | :--- | :--- | :--- | :--- | :--- |
 | **Development** | `dev` | `git push origin dev` | `/portfolio_new/dev/` | `gh-pages` branch (`dev/` directory) |
-| **Production** | `main` | `git push origin main` | `/portfolio_new/` | `gh-pages` branch (root `/`) |
+| **Production** | `main` or `v*.*.*` tag | `git push origin main` or `git push origin v1.0.1` | `/portfolio_new/` | `gh-pages` branch (root `/`) |
 
 #### Step-by-Step Push Examples
 
@@ -101,17 +103,7 @@ git push origin main
 > The `deploy-prod` job compiles with `--dart-define=ENV=prod` and deploys to `https://<username>.github.io/<repo>/`.
 
 #### Pushing with Tags (Release Tags)
-If you wish to trigger deployments via Git tags in the future, you can add `tags:` under `push` in [.github/workflows/deploy.yml](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/.github/workflows/deploy.yml):
-```yaml
-on:
-  push:
-    branches:
-      - dev
-      - main
-    tags:
-      - 'v*.*.*'
-```
-Commands to create and push a tag:
+Release tags (`v*.*.*`) automatically trigger the production deployment (`deploy-prod`) pipeline:
 ```bash
 git tag v1.0.1
 git push origin v1.0.1
