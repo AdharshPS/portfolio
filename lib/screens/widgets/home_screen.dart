@@ -204,186 +204,188 @@ class _PhoneMockup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final phoneWidth = width < 400 ? 240.0 : 260.0;
+    final phoneWidth = width < 360 ? 220.0 : (width < 400 ? 240.0 : 260.0);
     final phoneHeight = phoneWidth * (18.5 / 9.0);
 
-    return Transform.rotate(
-      angle: 3.0 * math.pi / 180.0,
-      child: Container(
-        width: phoneWidth,
-        height: phoneHeight,
-        margin: const EdgeInsets.symmetric(vertical: 20),
-        padding: const EdgeInsets.all(11),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(38),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF1E293B), Color(0xFF020617)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x472563EB),
-              blurRadius: 50,
-              offset: Offset(0, 24),
+    return Center(
+      child: Transform.rotate(
+        angle: 3.0 * math.pi / 180.0,
+        child: Container(
+          width: phoneWidth,
+          height: phoneHeight,
+          margin: const EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.all(11),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(38),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1E293B), Color(0xFF020617)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ],
-        ),
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            // Internal Screen
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF2563EB), Color(0xFF1E3A8A)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x472563EB),
+                blurRadius: 50,
+                offset: Offset(0, 24),
               ),
-              padding: const EdgeInsets.fromLTRB(16, 44, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // chip: flutter run
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.accent,
-                      borderRadius: BorderRadius.circular(99),
-                    ),
-                    child: Text(
-                      'flutter run',
-                      style: GoogleFonts.jetBrainsMono(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1C1917),
+            ],
+          ),
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              // Internal Screen
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF2563EB), Color(0xFF1E3A8A)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+                padding: const EdgeInsets.fromLTRB(16, 44, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // chip: flutter run
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Indicator bar
-                  Container(
-                    height: 8,
-                    width: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.25),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Code Snippet Tile
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: RichText(
-                      text: TextSpan(
+                      decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                      child: Text(
+                        'flutter run',
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 10,
-                          color: Colors.white,
-                          height: 1.5,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1C1917),
                         ),
-                        children: const [
-                          TextSpan(text: 'class '),
-                          TextSpan(
-                            text: 'HomePage\n',
-                            style: TextStyle(
-                              color: Color(0xFFFDBA74),
-                              fontWeight: FontWeight.bold,
-                            ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Indicator bar
+                    Container(
+                      height: 8,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Code Snippet Tile
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: RichText(
+                        text: TextSpan(
+                          style: GoogleFonts.jetBrainsMono(
+                            fontSize: 10,
+                            color: Colors.white,
+                            height: 1.5,
                           ),
-                          TextSpan(text: '  extends '),
-                          TextSpan(
-                            text: 'StatelessWidget',
-                            style: TextStyle(
-                              color: Color(0xFFFDBA74),
-                              fontWeight: FontWeight.bold,
+                          children: const [
+                            TextSpan(text: 'class '),
+                            TextSpan(
+                              text: 'HomePage\n',
+                              style: TextStyle(
+                                color: Color(0xFFFDBA74),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          TextSpan(text: ' {\n'),
-                          TextSpan(text: '    build(ctx) => '),
-                          TextSpan(
-                            text: 'Scaffold',
-                            style: TextStyle(
-                              color: Color(0xFFFDBA74),
-                              fontWeight: FontWeight.bold,
+                            TextSpan(text: '  extends '),
+                            TextSpan(
+                              text: 'StatelessWidget',
+                              style: TextStyle(
+                                color: Color(0xFFFDBA74),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          TextSpan(text: '();\n  }'),
+                            TextSpan(text: ' {\n'),
+                            TextSpan(text: '    build(ctx) => '),
+                            TextSpan(
+                              text: 'Scaffold',
+                              style: TextStyle(
+                                color: Color(0xFFFDBA74),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(text: '();\n  }'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Status Badges Tile
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _StatusLine('✓ 60 fps'),
+                          const SizedBox(height: 4),
+                          _StatusLine('✓ Android + iOS'),
+                          const SizedBox(height: 4),
+                          _StatusLine('✓ REST APIs synced'),
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
+                    const Spacer(),
 
-                  // Status Badges Tile
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(12),
+                    // Bottom indicator bars
+                    Container(
+                      height: 8,
+                      width: 170,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _StatusLine('✓ 60 fps'),
-                        const SizedBox(height: 4),
-                        _StatusLine('✓ Android + iOS'),
-                        const SizedBox(height: 4),
-                        _StatusLine('✓ REST APIs synced'),
-                      ],
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 8,
+                      width: 90,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-
-                  // Bottom indicator bars
-                  Container(
-                    height: 8,
-                    width: 170,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.25),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    height: 8,
-                    width: 90,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Top Speaker Notch
-            Positioned(
-              top: 6,
-              child: Container(
-                width: 70,
-                height: 16,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF020617),
-                  borderRadius: BorderRadius.circular(10),
+                  ],
                 ),
               ),
-            ),
-          ],
+
+              // Top Speaker Notch
+              Positioned(
+                top: 6,
+                child: Container(
+                  width: 70,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF020617),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

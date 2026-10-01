@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
@@ -35,17 +36,24 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
             .toList();
 
     final crossAxisCount = isDesktop ? 3 : (isTablet ? 2 : 1);
+    final horizontalPadding = isDesktop ? 60.0 : (isTablet ? 40.0 : 20.0);
+    final availableWidth = size.width - (horizontalPadding * 2);
+    final contentWidth = math.min(1200.0, math.max(0.0, availableWidth));
+
+    final spacing = 20.0;
+    final totalSpacing = (crossAxisCount - 1) * spacing;
+    final cardWidth = crossAxisCount > 0 ? (contentWidth - totalSpacing) / crossAxisCount : contentWidth;
 
     return Container(
       width: double.infinity,
       color: AppColors.surface(context),
       padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 60 : (isTablet ? 40 : 20),
+        horizontal: horizontalPadding,
         vertical: isDesktop ? 90 : (isTablet ? 70 : 50),
       ),
       child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
+        child: SizedBox(
+          width: contentWidth,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -85,27 +93,32 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               const SizedBox(height: 36),
 
               // Projects Grid
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final spacing = 20.0;
-                  final totalSpacing = (crossAxisCount - 1) * spacing;
-                  final cardWidth = (constraints.maxWidth - totalSpacing) / crossAxisCount;
-
-                  return Wrap(
-                    spacing: spacing,
-                    runSpacing: spacing,
-                    children: filteredProjects.map((project) {
-                      return SizedBox(
-                        width: cardWidth,
-                        child: _ProjectCard(
-                          project: project,
-                          onLaunch: _launch,
-                        ),
-                      );
-                    }).toList(),
-                  );
-                },
-              ),
+              if (filteredProjects.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Text(
+                    'No projects found in this category.',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      color: AppColors.muted(context),
+                    ),
+                  ),
+                )
+              else
+                Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: spacing,
+                  runSpacing: spacing,
+                  children: filteredProjects.map((project) {
+                    return SizedBox(
+                      width: cardWidth,
+                      child: _ProjectCard(
+                        project: project,
+                        onLaunch: _launch,
+                      ),
+                    );
+                  }).toList(),
+                ),
             ],
           ),
         ),

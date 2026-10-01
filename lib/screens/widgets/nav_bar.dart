@@ -387,11 +387,12 @@ class MobileDrawer extends StatelessWidget {
             bottom: 0,
             right: isOpen ? 0 : -320,
             width: 280,
-            child: Container(
+            child: Material(
               color: AppColors.card(context),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-              child: SafeArea(
-                child: Column(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                child: SafeArea(
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Header with logo and close button
@@ -524,9 +525,10 @@ class MobileDrawer extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ),
+  );
   }
 }
 
