@@ -29,6 +29,7 @@ class PortfolioHardcodedSource {
         accentColorHex:
             '#${p.accentColor.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}',
         accentColor: p.accentColor,
+        deviceType: DeviceType.phone,
       );
     }).toList();
 

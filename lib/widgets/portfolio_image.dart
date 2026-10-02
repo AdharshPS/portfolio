@@ -1,15 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 /// A unified, resilient image widget for all portfolio image slots
 /// (avatarImage, thumbnail, ogImage).
 ///
 /// Features:
-/// - http(s) URL -> [CachedNetworkImage] with cacheKey = imageUrl
-/// - Any other string -> local [Image.asset]
-/// - Empty, broken or slow URLs fallback to [fallbackAsset], then [fallbackWidget] / neutral box
-/// - Preserves fixed size/fit so layout never shifts
-/// - Configures [memCacheWidth] & [memCacheHeight] based on display size
+/// - Strictly local asset-based: no HTTP/HTTPS network calls are made for images.
+/// - Resolves remote URLs or image names to corresponding local assets if provided.
+/// - Any other string is treated as local [Image.asset].
+/// - Empty, missing, or invalid paths fallback to [fallbackAsset], then [fallbackWidget] / neutral box.
+/// - Preserves fixed size/fit so layout never shifts.
 class PortfolioImage extends StatelessWidget {
   final String imagePath;
   final String fallbackAsset;
@@ -36,9 +35,36 @@ class PortfolioImage extends StatelessWidget {
     this.memCacheHeight,
   });
 
-  bool get _isNetworkUrl {
-    final lower = imagePath.trim().toLowerCase();
-    return lower.startsWith('http://') || lower.startsWith('https://');
+  /// Normalizes/resolves any image path or URL to a safe local asset path,
+  /// ensuring no HTTP/HTTPS requests are ever performed for images.
+  static String resolveAssetPath(String path) {
+    final trimmed = path.trim();
+    if (trimmed.isEmpty) return '';
+
+    final lower = trimmed.toLowerCase();
+
+    // Map known project / profile images even if provided as remote URLs or filenames
+    if (lower.contains('me.png') ||
+        lower.contains('me.webp') ||
+        lower.contains('avatar')) {
+      return 'assets/images/me.png';
+    }
+    if (lower.contains('noteflow')) {
+      return 'assets/images/projects/noteflow.png';
+    }
+    if (lower.contains('paws')) {
+      return 'assets/images/projects/paws.png';
+    }
+    if (lower.contains('netflix')) {
+      return 'assets/images/projects/netflix.png';
+    }
+
+    // If it's an HTTP/HTTPS URL that didn't match known assets, do NOT make an HTTP call
+    if (lower.startsWith('http://') || lower.startsWith('https://')) {
+      return '';
+    }
+
+    return trimmed;
   }
 
   int? get _resolvedMemCacheWidth {
@@ -59,30 +85,19 @@ class PortfolioImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedPath = resolveAssetPath(imagePath);
     Widget content;
-    final trimmedPath = imagePath.trim();
 
-    if (trimmedPath.isEmpty) {
+    if (resolvedPath.isEmpty) {
       content = _buildAssetFallback(context);
-    } else if (_isNetworkUrl) {
-      content = CachedNetworkImage(
-        imageUrl: trimmedPath,
-        cacheKey: trimmedPath,
-        width: width,
-        height: height,
-        fit: fit,
-        memCacheWidth: _resolvedMemCacheWidth,
-        memCacheHeight: _resolvedMemCacheHeight,
-        placeholder: (context, url) =>
-            placeholder ?? _buildNeutralPlaceholder(context),
-        errorWidget: (context, url, error) => _buildAssetFallback(context),
-      );
     } else {
       content = Image.asset(
-        trimmedPath,
+        resolvedPath,
         width: width,
         height: height,
         fit: fit,
+        cacheWidth: _resolvedMemCacheWidth,
+        cacheHeight: _resolvedMemCacheHeight,
         errorBuilder: (context, error, stackTrace) =>
             _buildAssetFallback(context),
       );
@@ -96,37 +111,22 @@ class PortfolioImage extends StatelessWidget {
   }
 
   Widget _buildAssetFallback(BuildContext context) {
-    final trimmedFallback = fallbackAsset.trim();
-    if (trimmedFallback.isNotEmpty && trimmedFallback != imagePath.trim()) {
+    final resolvedFallback = resolveAssetPath(fallbackAsset);
+    if (resolvedFallback.isNotEmpty &&
+        resolvedFallback != resolveAssetPath(imagePath)) {
       return Image.asset(
-        trimmedFallback,
+        resolvedFallback,
         width: width,
         height: height,
         fit: fit,
+        cacheWidth: _resolvedMemCacheWidth,
+        cacheHeight: _resolvedMemCacheHeight,
         errorBuilder: (context, error, stackTrace) {
           return _buildNeutralIconBox(context);
         },
       );
     }
     return _buildNeutralIconBox(context);
-  }
-
-  Widget _buildNeutralPlaceholder(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      color: const Color(0xFF1E293B),
-      child: Center(
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildNeutralIconBox(BuildContext context) {

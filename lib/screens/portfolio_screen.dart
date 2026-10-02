@@ -10,7 +10,6 @@ import 'package:portfolio_new/screens/widgets/project_screen.dart';
 import 'package:portfolio_new/screens/widgets/skills_screen.dart';
 import 'package:portfolio_new/screens/widgets/testimonials_screen.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
-import 'package:portfolio_new/services/portfolio_state.dart';
 import 'package:portfolio_new/widgets/app_toast.dart';
 
 class PortfolioScrollablePage extends StatefulWidget {
@@ -125,9 +124,6 @@ class _PortfolioScrollablePageState extends State<PortfolioScrollablePage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = PortfolioScope.stateOf(context);
-    final isRefreshing = state.status == PortfolioStatus.refreshing;
-
     return Scaffold(
       backgroundColor: AppColors.bg(context),
       body: Stack(
@@ -197,8 +193,6 @@ class _PortfolioScrollablePageState extends State<PortfolioScrollablePage> {
             right: 0,
             child: NavBar(
               activeSection: _activeSection,
-              isRefreshing: isRefreshing,
-              onRefreshTap: _handleRefresh,
               onHomeTap: () => _scrollToKey(_homeKey),
               onAboutTap: () => _scrollToKey(_aboutKey),
               onSkillsTap: () => _scrollToKey(_skillsKey),

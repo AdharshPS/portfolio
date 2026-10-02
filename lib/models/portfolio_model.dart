@@ -280,8 +280,10 @@ class Profile {
       headlineGreeting:
           (json['headlineGreeting'] as String?)?.trim() ?? '// hello, world',
       tagline: (json['tagline'] as String?)?.trim() ?? '',
-      avatarImage:
-          (json['avatarImage'] as String?)?.trim() ?? 'assets/images/me.png',
+      avatarImage: _resolveImageAsset(
+        json['avatarImage'],
+        fallback: 'assets/images/me.png',
+      ),
       email: _cleanString(json['email']),
       phone: _cleanString(json['phone']),
       location: _cleanString(json['location']),
@@ -412,6 +414,12 @@ class Deploy {
   }
 }
 
+enum DeviceType {
+  phone,
+  desktop,
+  web,
+}
+
 class Project {
   final String title;
   final String description;
@@ -422,6 +430,7 @@ class Project {
   final String thumbnail;
   final String accentColorHex;
   final Color accentColor;
+  final DeviceType deviceType;
 
   const Project({
     required this.title,
@@ -433,6 +442,7 @@ class Project {
     required this.thumbnail,
     required this.accentColorHex,
     required this.accentColor,
+    this.deviceType = DeviceType.phone,
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
@@ -440,7 +450,7 @@ class Project {
     final description = (json['description'] as String?)?.trim() ?? '';
     final type = (json['type'] as String?)?.trim() ?? 'Other';
     final github = (json['github'] as String?)?.trim() ?? '';
-    final thumbnail = (json['thumbnail'] as String?)?.trim() ?? '';
+    final thumbnail = _resolveImageAsset(json['thumbnail'], fallback: '');
     final accentHex = (json['accentColor'] as String?)?.trim() ?? '#2563EB';
 
     final tags = <String>[];
@@ -449,6 +459,25 @@ class Project {
         if (t != null && t.toString().trim().isNotEmpty) {
           tags.add(t.toString().trim());
         }
+      }
+    }
+
+    final rawDeviceType = (json['deviceType'] as String?)?.trim().toLowerCase();
+    DeviceType deviceType;
+    if (rawDeviceType == 'desktop') {
+      deviceType = DeviceType.desktop;
+    } else if (rawDeviceType == 'web') {
+      deviceType = DeviceType.web;
+    } else if (rawDeviceType == 'phone') {
+      deviceType = DeviceType.phone;
+    } else {
+      final lowerTags = tags.map((t) => t.toLowerCase()).toList();
+      if (lowerTags.any((t) => t.contains('windows desktop') || t == 'desktop')) {
+        deviceType = DeviceType.desktop;
+      } else if (lowerTags.any((t) => t == 'web')) {
+        deviceType = DeviceType.web;
+      } else {
+        deviceType = DeviceType.phone;
       }
     }
 
@@ -466,6 +495,7 @@ class Project {
       thumbnail: thumbnail,
       accentColorHex: accentHex,
       accentColor: parseHexColor(accentHex),
+      deviceType: deviceType,
     );
   }
 
@@ -479,6 +509,7 @@ class Project {
       'deploy': deploy.toJson(),
       'thumbnail': thumbnail,
       'accentColor': accentColorHex,
+      'deviceType': deviceType.name,
     };
   }
 
@@ -597,7 +628,10 @@ class SeoMeta {
           'Adharsh P S | Flutter Mobile Developer',
       metaDescription: (json['metaDescription'] as String?)?.trim() ?? '',
       canonicalUrl: (json['canonicalUrl'] as String?)?.trim() ?? '',
-      ogImage: (json['ogImage'] as String?)?.trim() ?? '',
+      ogImage: _resolveImageAsset(
+        json['ogImage'],
+        fallback: 'assets/images/og-preview.png',
+      ),
       favicon: (json['favicon'] as String?)?.trim() ?? '',
       themeColor: (json['themeColor'] as String?)?.trim() ?? '#0B1220',
     );
@@ -642,4 +676,33 @@ String? _cleanString(dynamic val) {
   if (val == null) return null;
   final s = val.toString().trim();
   return s.isEmpty ? null : s;
+}
+
+String _resolveImageAsset(dynamic raw, {String fallback = ''}) {
+  if (raw == null) return fallback;
+  final trimmed = raw.toString().trim();
+  if (trimmed.isEmpty) return fallback;
+
+  final lower = trimmed.toLowerCase();
+  if (lower.contains('me.png') ||
+      lower.contains('me.webp') ||
+      lower.contains('avatar')) {
+    return 'assets/images/me.png';
+  }
+  if (lower.contains('noteflow')) {
+    return 'assets/images/projects/noteflow.png';
+  }
+  if (lower.contains('paws')) {
+    return 'assets/images/projects/paws.png';
+  }
+  if (lower.contains('netflix')) {
+    return 'assets/images/projects/netflix.png';
+  }
+
+  // If it's an HTTP/HTTPS URL that didn't match known assets, do NOT make an HTTP call
+  if (lower.startsWith('http://') || lower.startsWith('https://')) {
+    return fallback;
+  }
+
+  return trimmed;
 }

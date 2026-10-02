@@ -13,8 +13,6 @@ class NavBar extends StatelessWidget {
   final VoidCallback onContactTap;
   final VoidCallback onMenuTap;
   final String activeSection;
-  final bool isRefreshing;
-  final VoidCallback? onRefreshTap;
 
   const NavBar({
     super.key,
@@ -26,8 +24,6 @@ class NavBar extends StatelessWidget {
     required this.onContactTap,
     required this.onMenuTap,
     this.activeSection = 'home',
-    this.isRefreshing = false,
-    this.onRefreshTap,
   });
 
   @override
@@ -143,18 +139,6 @@ class NavBar extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (onRefreshTap != null) ...[
-                        _IconButton(
-                          tooltip: 'Refresh portfolio',
-                          icon: isRefreshing
-                              ? Icons.sync_rounded
-                              : Icons.refresh_rounded,
-                          size: iconBtnSize,
-                          iconSize: iconSize,
-                          onTap: isRefreshing ? () {} : onRefreshTap!,
-                        ),
-                        SizedBox(width: actionSpacing),
-                      ],
                       // Theme Toggle Button
                       _IconButton(
                         tooltip: 'Toggle Theme',

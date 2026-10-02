@@ -1,148 +1,93 @@
-# Adharsh P S — Developer Portfolio
+# Adharsh P S — Flutter Developer Portfolio
 
-A modern, responsive, and high-performance developer portfolio web application built with **Flutter Web** and **Dart**. Designed with clean architecture, dynamic remote content configuration via JSON, dual DEV/PROD CI/CD pipelines, and fluid responsive design across mobile, tablet, and desktop viewports.
-
----
-
-## 📌 Environment & Versions
-
-| Tool | Version | Notes |
-| :--- | :--- | :--- |
-| **Flutter** | `3.38.5` (CI/CD) / `3.x` Stable | Specified in `.github/workflows/deploy.yml` |
-| **Dart SDK** | `^3.8.1` (`>=3.8.1 <4.0.0`) | Specified in `pubspec.yaml` environment SDK |
-| **Channel** | `stable` | Recommended for all production builds |
+A responsive, high-performance portfolio web application built with **Flutter Web** and **Dart**. Powered by dynamic JSON content, clean architecture, and automated CI/CD deployment to GitHub Pages.
 
 ---
 
-## 🚀 How to Update Portfolio Content
+## ⚡ Live URLs
 
-The portfolio content is decoupled from the UI code and managed dynamically via [portfolio.json](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/portfolio.json).
+* **Production:** [https://adharshps.github.io/portfolio_new/](https://adharshps.github.io/portfolio_new/)
+* **Development:** [https://adharshps.github.io/portfolio_new/dev/](https://adharshps.github.io/portfolio_new/dev/)
 
-### 1. Dynamic Live Updates (No Rebuild Required)
-The web application fetches the latest data at runtime directly from the public GitHub repository:
-```
+---
+
+## 📝 Updating Portfolio Content (No Rebuild Needed)
+
+Content is managed dynamically via [`portfolio.json`](portfolio.json) and fetched live at runtime from GitHub:
+
+```text
 https://raw.githubusercontent.com/AdharshPS/portfolio_new/main/portfolio.json
 ```
-- **Instant Changes:** When you edit [portfolio.json](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/portfolio.json) and push to `main`, visitors receive the updated content immediately upon reloading (cached with local storage fallback).
-- **Fast CI/CD:** Changes to `portfolio.json` **do not** trigger a Flutter build or deployment pipeline run because `.github/workflows/deploy.yml` has `paths-ignore: - 'portfolio.json'`.
 
-### 2. Content Structure Overview
-Open [portfolio.json](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/portfolio.json) in your editor. You can update any of the following blocks:
-
-- **`profile`**:
-  - `name`, `role`, `tagline`, `headlineGreeting`
-  - `email`, `phone`, `location`, `github`, `linkedin`
-  - `cv`: Set `fileName` and `downloadUrl` (e.g. direct Google Drive download link)
-  - `avatarImage`: Path to local asset (`assets/images/me.png`) or remote image URL
-- **`about`**:
-  - `intro`: Elevator pitch and summary
-  - `journey`: Detailed background, career transition, and experience
-- **`stats`**:
-  - Array of key highlights (e.g. `[{"value": "1.5+", "label": "Years experience"}]`)
-- **`skills`**:
-  - Grouped categories (`Core Flutter`, `Backend & Data`, `Security & Storage`, `Delivery & Tools`) containing lists of skill tags
-- **`projects`**:
-  - Each item contains `title`, `description`, `type` (e.g. `"Open Source"`), `tags`, `github`, `thumbnail`, `accentColor`, and `deploy` links (`web`, `playstore`, `appstore`, `apk`)
-- **`experience`**:
-  - Work history entries with `role`, `company`, `period`, and bullet `points`
-- **`testimonials`**:
-  - Feedback entries with `quote`, `name`, and `role`
-- **`seoAndMeta`**:
-  - `siteTitle`, `metaDescription`, `canonicalUrl`, and theme colors
-
-### 3. Adding New Images
-1. Save your image into `assets/images/` or `assets/images/projects/`.
-2. Reference the path in [portfolio.json](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/portfolio.json) (or provide an external `https://` URL).
-3. If adding a new asset file, commit and push to trigger a deployment so the asset bundle is updated.
+* **Instant Updates:** Changes pushed to `portfolio.json` appear on the live site immediately upon refresh without needing to recompile Flutter.
+* **Key Sections in `portfolio.json`:**
+  * **`profile`**: Name, role, contact links, resume URL (`cv`), and profile picture.
+  * **`about`**: Professional summary and career journey.
+  * **`stats`**: Quick highlights (`2+` Years experience, `8+` Projects shipped, `20+` Tech & tools).
+  * **`skills`**: Categorized technical skills (`Core Flutter`, `Backend & Data`, `Security & Storage`, `Hardware & Integrations`, `Design & AI Tools`, `Delivery & Tools`).
+  * **`projects`**: Featured apps with descriptions, tags, GitHub links, and deployment URLs.
+  * **`experience`**: Career timeline, companies, roles, and key achievements.
+  * **`education` & `testimonials`**: Academic qualifications and client/team recommendations.
 
 ---
 
-## 🔄 CI/CD & Automated Deployment
+## 🚀 CI/CD & Deployment Workflow
 
-Deployment is fully automated using **GitHub Actions** defined in [.github/workflows/deploy.yml](file:///c:/Users/adhar/Desktop/Flutter/portfolio_new/.github/workflows/deploy.yml).
+Deployments to GitHub Pages are automated via GitHub Actions ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)).
 
-### Trigger Keyword in CI/CD: `push`
-The workflow is triggered automatically on **`push`** to specific target branches and release tags:
+### ⚠️ Trigger Condition: Version / Build Number Change Only
+To save build time and avoid unnecessary pipeline runs, **CI/CD will only trigger when the version or build number in [`pubspec.yaml`](pubspec.yaml) is updated**. Regular code or asset pushes without a version bump will not trigger a deployment.
 
 ```yaml
-on:
-  push:
-    branches:
-      - dev
-      - main
-    tags:
-      - 'v*.*.*'
-    paths-ignore:
-      - 'portfolio.json'
+# In pubspec.yaml:
+version: 1.0.1+2   # Increment the build number (e.g. +3) or version to trigger CI/CD
 ```
 
-### Environments & Deployment Commands
+### Branches & Environments
 
-| Environment | Target Branch / Tag | Trigger Command | Base URL | GitHub Pages Destination |
-| :--- | :--- | :--- | :--- | :--- |
-| **Development** | `dev` | `git push origin dev` | `/portfolio_new/dev/` | `gh-pages` branch (`dev/` directory) |
-| **Production** | `main` or `v*.*.*` tag | `git push origin main` or `git push origin v1.0.1` | `/portfolio_new/` | `gh-pages` branch (root `/`) |
+| Environment | Branch | Live Path | Deployment Trigger |
+| :--- | :--- | :--- | :--- |
+| **Development** | `dev` | `/portfolio_new/dev/` | Push to `dev` with an updated version/build number |
+| **Production** | `main` | `/portfolio_new/` | Push/merge to `main` with an updated version/build number |
 
-#### Step-by-Step Push Examples
+#### How to Deploy:
 
-**Deploying to Development (`dev`):**
+**1. Deploy to Development (`dev`):**
 ```bash
 git checkout dev
+# Bump version or build number in pubspec.yaml (e.g., 1.0.1+3)
 git add .
-git commit -m "Your dev changes"
+git commit -m "feat: new updates"
 git push origin dev
 ```
-> The `deploy-dev` job compiles with `--dart-define=ENV=dev` and deploys to `https://<username>.github.io/<repo>/dev/`.
 
-**Deploying to Production (`main`):**
+**2. Deploy to Production (`main`):**
 ```bash
 git checkout main
-git merge dev      # Or merge via Pull Request on GitHub
+git merge dev
+# Ensure pubspec.yaml has the updated version/build number
 git push origin main
 ```
-> The `deploy-prod` job compiles with `--dart-define=ENV=prod` and deploys to `https://<username>.github.io/<repo>/`.
-
-#### Pushing with Tags (Release Tags)
-Release tags (`v*.*.*`) automatically trigger the production deployment (`deploy-prod`) pipeline:
-```bash
-git tag v1.0.1
-git push origin v1.0.1
-```
-
-### Automatic Cache Invalidation
-The CI/CD pipeline injects the unique GitHub run number during the build:
-```bash
---dart-define=BUILD_VERSION=${{ github.run_number }}
-```
-When visitors load the web app, it checks `BUILD_VERSION` against `localStorage`. If a new version is detected, it automatically refreshes the browser window to purge stale cached scripts.
 
 ---
 
 ## 💻 Local Development
 
-### Prerequisites
-- Flutter SDK `3.38.5` or later
-- Dart SDK `^3.8.1`
-- Google Chrome (for web debugging)
+### Requirements
+* **Flutter SDK:** `3.47.5` (channel stable)
+* **Dart SDK:** `^3.13.4`
 
 ### Commands
 ```bash
-# Clone the repository
-git clone https://github.com/AdharshPS/portfolio_new.git
-cd portfolio_new
-
-# Install dependencies
+# Get dependencies
 flutter pub get
 
-# Run on Chrome locally
+# Run on Chrome
 flutter run -d chrome
-
-# Run with custom environment define
-flutter run -d chrome --dart-define=ENV=dev
 
 # Run tests
 flutter test
 
-# Build for Web manually
+# Build for Web
 flutter build web --release --base-href="/portfolio_new/"
 ```

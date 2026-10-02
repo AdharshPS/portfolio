@@ -4,7 +4,7 @@
     "role": "Flutter Mobile Developer",
     "headlineGreeting": "// hello, world",
     "tagline": "I build fast, polished Flutter apps for Android, iOS, Web and Windows Desktop, from clean architecture to REST APIs and ERP integrations.",
-    "avatarImage": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/me.webp",
+    "avatarImage": "assets/images/me.png",
     "email": "adharshps000@gmail.com",
     "phone": "+91 8138987626",
     "location": "Thrissur, Kerala, India",
@@ -12,7 +12,7 @@
     "linkedin": "https://www.linkedin.com/in/adharshzps/",
     "cv": {
       "fileName": "Adharsh PS CV.pdf",
-      "downloadUrl": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/Adharsh.P.S.CV.pdf"
+      "downloadUrl": "https://drive.google.com/uc?export=download&id=1RFc9qpkNY7QelQ_2ZleT2xBEgNiuv6DG"
     }
   },
   "about": {
@@ -80,6 +80,7 @@
   "projects": [
     {
       "title": "Attendance Synchronization System",
+      "deviceType": "desktop",
       "description": "Flutter Windows Desktop app used in production by an enterprise client. Integrates ZKTeco biometric devices with Odoo ERP to automate user and attendance log retrieval via secure device communication and REST API sync, replacing manual reconciliation.",
       "type": "Professional",
       "tags": [
@@ -101,6 +102,7 @@
     },
     {
       "title": "Supply Chain Management App",
+      "deviceType": "phone",
       "description": "Offline-first Flutter app (Android & iOS) for warehouse operations as a SaaS product: ASN receiving and put-away with batch handling, barcode scanning across Honeywell, Zebra and camera scanners, order picking with tote assignment, and packing. Syncs via Hive and Dio with an Odoo ERP backend.",
       "type": "Professional",
       "tags": [
@@ -123,6 +125,7 @@
     },
     {
       "title": "Office Management App",
+      "deviceType": "phone",
       "description": "Enterprise Flutter app (Android & iOS) built as a SaaS product for business clients. Covers attendance, expenses, leave, payslips and events with manager login, JWT authentication, encrypted local storage and an Odoo ERP backend.",
       "type": "Professional",
       "tags": [
@@ -144,6 +147,7 @@
     },
     {
       "title": "API Testing Tool (Postman Clone)",
+      "deviceType": "web",
       "description": "Cross-platform REST client for Windows Desktop and Web with a request builder, collections, environments, request history and Firebase API testing support, built to improve internal developer workflow.",
       "type": "Professional",
       "tags": [
@@ -165,6 +169,7 @@
     },
     {
       "title": "UdaanCheck",
+      "deviceType": "phone",
       "description": "Travel-assist app for Android and iOS covering airline luggage rules, released on the Play Store and App Store.",
       "type": "Consumer",
       "tags": [
@@ -175,7 +180,7 @@
       "github": "",
       "deploy": {
         "web": "",
-        "playstore": "",
+        "playstore": "https://play.google.com/store/apps/details?id=com.avanzo.udaancheck&hl=en_IN",
         "appstore": "",
         "apk": ""
       },
@@ -184,6 +189,7 @@
     },
     {
       "title": "CyberHulk",
+      "deviceType": "phone",
       "description": "Cyber-awareness Android application published on Google Play.",
       "type": "Consumer",
       "tags": [
@@ -194,7 +200,7 @@
       "github": "",
       "deploy": {
         "web": "",
-        "playstore": "",
+        "playstore": "https://play.google.com/store/apps/details?id=com.cyberhulk&hl=en_IN",
         "appstore": "",
         "apk": ""
       },
@@ -203,6 +209,7 @@
     },
     {
       "title": "NoteFlow",
+      "deviceType": "phone",
       "description": "Lightweight offline-first notes application built with Flutter following Clean Architecture. Features Hive local storage, AI-assisted content refinement, and automated GitHub Actions CI/CD.",
       "type": "Open Source",
       "tags": [
@@ -219,11 +226,12 @@
         "appstore": "",
         "apk": ""
       },
-      "thumbnail": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/noteflow.png",
+      "thumbnail": "assets/images/projects/noteflow.png",
       "accentColor": "#2563EB"
     },
     {
       "title": "Paws (Pet Marketplace)",
+      "deviceType": "phone",
       "description": "User-to-user pet marketplace for listing and browsing pets, built with BLoC state management. Uses Firebase authentication and Firestore, with Cloudinary for media storage in a hybrid cloud setup.",
       "type": "Personal",
       "tags": [
@@ -240,11 +248,12 @@
         "appstore": "",
         "apk": ""
       },
-      "thumbnail": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/paws.png",
+      "thumbnail": "assets/images/projects/paws.png",
       "accentColor": "#F97316"
     },
     {
       "title": "Netflix UI Clone",
+      "deviceType": "phone",
       "description": "Visually faithful recreation of the Netflix mobile interface with dynamic hero banners, categorized movie carousels, responsive layout scaling, and fluid animations.",
       "type": "UI/UX",
       "tags": [
@@ -260,7 +269,7 @@
         "appstore": "",
         "apk": ""
       },
-      "thumbnail": "https://github.com/AdharshPS/portfolio_new/releases/download/assets/netflix.png",
+      "thumbnail": "assets/images/projects/netflix.png",
       "accentColor": "#EF4444"
     }
   ],
@@ -309,8 +318,8 @@
   ],
   "testimonials": [
     {
-      "quote": "Adharsh consistently delivers clean, well-structured Flutter code. His work on offline-first sync and Odoo integrations has been dependable, and he communicates clearly across frontend and backend.",
-      "name": "Engineering Team",
+      "quote": "Adharsh consistently delivers clean, well-structured Flutter code. His work on Odoo integrations has been dependable, and he communicates clearly across frontend and backend.",
+      "name": "Team Lead",
       "role": "Odox SoftHub LLP"
     },
     {

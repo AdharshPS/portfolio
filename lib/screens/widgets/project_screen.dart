@@ -1,11 +1,12 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:portfolio_new/constants/color_constants.dart';
 import 'package:portfolio_new/constants/typography_constants.dart';
-import 'package:portfolio_new/constants/image_constants.dart';
 import 'package:portfolio_new/constants/project_constants.dart';
 import 'package:portfolio_new/models/portfolio_model.dart';
 import 'package:portfolio_new/services/portfolio_scope.dart';
+import 'package:portfolio_new/widgets/device_frame.dart';
 import 'package:portfolio_new/widgets/portfolio_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,6 +36,15 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     final allProjects = portfolio.projects.isNotEmpty
         ? portfolio.projects
         : ProjectConstants.projects.map((p) {
+            final lowerTags = p.tags.map((t) => t.toLowerCase()).toList();
+            DeviceType deviceType = DeviceType.phone;
+            if (lowerTags.any(
+              (t) => t.contains('windows desktop') || t == 'desktop',
+            )) {
+              deviceType = DeviceType.desktop;
+            } else if (lowerTags.any((t) => t == 'web')) {
+              deviceType = DeviceType.web;
+            }
             return Project(
               title: p.title,
               description: p.description,
@@ -45,6 +55,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               thumbnail: p.imagePath,
               accentColorHex: '#2563EB',
               accentColor: p.accentColor,
+              deviceType: deviceType,
             );
           }).toList();
 
@@ -67,16 +78,9 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               )
               .toList();
 
-    final crossAxisCount = isDesktop ? 3 : (isTablet ? 2 : 1);
     final horizontalPadding = isDesktop ? 60.0 : (isTablet ? 40.0 : 20.0);
     final availableWidth = size.width - (horizontalPadding * 2);
     final contentWidth = math.min(1200.0, math.max(0.0, availableWidth));
-
-    final spacing = 20.0;
-    final totalSpacing = (crossAxisCount - 1) * spacing;
-    final cardWidth = crossAxisCount > 0
-        ? (contentWidth - totalSpacing) / crossAxisCount
-        : contentWidth;
 
     return Container(
       width: double.infinity,
@@ -126,30 +130,91 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               ),
               const SizedBox(height: 36),
 
-              // Projects Grid
-              if (filteredProjects.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
-                  child: Text(
-                    'No projects found in this category.',
-                    style: AppTypography.inter(
-                      fontSize: 15,
-                      color: AppColors.muted(context),
-                    ),
-                  ),
-                )
-              else
-                Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: spacing,
-                  runSpacing: spacing,
-                  children: filteredProjects.map((project) {
-                    return SizedBox(
-                      width: cardWidth,
-                      child: _ProjectCard(project: project, onLaunch: _launch),
+              // Responsive Projects Grid with dynamic column count and IntrinsicHeight rows
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  if (filteredProjects.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: Text(
+                        'No projects found in this category.',
+                        style: AppTypography.inter(
+                          fontSize: 15,
+                          color: AppColors.muted(context),
+                        ),
+                      ),
                     );
-                  }).toList(),
-                ),
+                  }
+
+                  final availableGridWidth = constraints.maxWidth;
+                  final int columnCount;
+                  if (availableGridWidth >= 900) {
+                    columnCount = 3;
+                  } else if (availableGridWidth >= 580) {
+                    columnCount = 2;
+                  } else {
+                    columnCount = 1;
+                  }
+
+                  const spacing = 20.0;
+                  final cardWidth = columnCount == 1
+                      ? availableGridWidth
+                      : (availableGridWidth - (columnCount - 1) * spacing) /
+                            columnCount;
+                  final rows = <Widget>[];
+
+                  for (
+                    int i = 0;
+                    i < filteredProjects.length;
+                    i += columnCount
+                  ) {
+                    final chunk = filteredProjects.sublist(
+                      i,
+                      math.min(i + columnCount, filteredProjects.length),
+                    );
+
+                    final rowChildren = <Widget>[];
+                    for (int col = 0; col < columnCount; col++) {
+                      if (col > 0) {
+                        rowChildren.add(const SizedBox(width: spacing));
+                      }
+                      if (col < chunk.length) {
+                        rowChildren.add(
+                          Expanded(
+                            child: _ProjectCard(
+                              project: chunk[col],
+                              onLaunch: _launch,
+                              cardWidth: cardWidth,
+                            ),
+                          ),
+                        );
+                      } else {
+                        rowChildren.add(
+                          const Expanded(child: SizedBox.shrink()),
+                        );
+                      }
+                    }
+
+                    if (rows.isNotEmpty) {
+                      rows.add(const SizedBox(height: spacing));
+                    }
+
+                    rows.add(
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: rowChildren,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: rows,
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -205,8 +270,13 @@ class _FilterPill extends StatelessWidget {
 class _ProjectCard extends StatefulWidget {
   final Project project;
   final Function(String) onLaunch;
+  final double cardWidth;
 
-  const _ProjectCard({required this.project, required this.onLaunch});
+  const _ProjectCard({
+    required this.project,
+    required this.onLaunch,
+    this.cardWidth = 350.0,
+  });
 
   @override
   State<_ProjectCard> createState() => _ProjectCardState();
@@ -215,112 +285,237 @@ class _ProjectCard extends StatefulWidget {
 class _ProjectCardState extends State<_ProjectCard> {
   bool isHovered = false;
 
+  void _showFullDescription(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: AppColors.card(ctx),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: AppColors.line(ctx), width: 1.2),
+          ),
+          title: Text(
+            widget.project.title,
+            style: AppTypography.inter(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: AppColors.text(ctx),
+            ),
+          ),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: SingleChildScrollView(
+              child: Text(
+                widget.project.description,
+                style: AppTypography.inter(
+                  fontSize: 15,
+                  height: 1.6,
+                  color: AppColors.muted(ctx),
+                ),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(
+                'Close',
+                style: AppTypography.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primaryInk(ctx),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final text = AppColors.text(context);
     final muted = AppColors.muted(context);
     final line = AppColors.line(context);
     final primaryInk = AppColors.primaryInk(context);
+    final textScaler = MediaQuery.textScalerOf(context);
+
+    final innerWidth = math.max(100.0, widget.cardWidth - 40.0);
+    final thumbnailHeight = widget.cardWidth / (16 / 9);
+
+    // Measure Title
+    final titlePainter = TextPainter(
+      text: TextSpan(
+        text: widget.project.title,
+        style: AppTypography.inter(
+          fontSize: 19,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      textScaler: textScaler,
+    )..layout(maxWidth: innerWidth);
+    final titleHeight = math.max(
+      titlePainter.height,
+      (widget.project.title.length * 11.0 / innerWidth).ceil() * 26.0,
+    );
+
+    // Measure Description (clamped to 3 lines)
+    double descHeight = 0.0;
+    if (widget.project.description.trim().isNotEmpty) {
+      final descPainter = TextPainter(
+        text: TextSpan(
+          text: widget.project.description,
+          style: AppTypography.inter(
+            fontSize: 14,
+            height: 1.55,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+        textScaler: textScaler,
+        maxLines: 3,
+      )..layout(maxWidth: innerWidth);
+      descHeight = 8.0 + descPainter.height + 4.0 + textScaler.scale(22.0);
+    }
+
+    // Measure Tags Wrap
+    double tagsHeight = 0.0;
+    if (widget.project.tags.isNotEmpty) {
+      double currentLineWidth = 0;
+      double currentLineMaxHeight = 28.0;
+      for (final tag in widget.project.tags) {
+        final tagPainter = TextPainter(
+          text: TextSpan(
+            text: tag,
+            style: AppTypography.mono(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+          textScaler: textScaler,
+        )..layout(maxWidth: math.max(40.0, innerWidth - 20.0));
+        // Use max of measured width and monospace character width to protect against unrendered font metrics
+        final measuredW = math.max(tagPainter.width, tag.length * 7.5);
+        final tagW = math.min(innerWidth, measuredW + 24.0);
+        final tagH = math.max(tagPainter.height + 10.0, 28.0);
+
+        if (currentLineWidth > 0 &&
+            currentLineWidth + 6.0 + tagW > innerWidth) {
+          tagsHeight += currentLineMaxHeight + 6.0;
+          currentLineWidth = tagW;
+          currentLineMaxHeight = tagH;
+        } else {
+          currentLineWidth += (currentLineWidth > 0 ? 6.0 : 0.0) + tagW;
+          currentLineMaxHeight = math.max(currentLineMaxHeight, tagH);
+        }
+      }
+      tagsHeight += currentLineMaxHeight;
+    }
+
+    // Measure Links Wrap
+    double linksHeight = 0.0;
+    if (widget.project.links.isNotEmpty) {
+      double currentLineWidth = 0;
+      double currentLineMaxHeight = 20.0;
+      for (final linkKey in widget.project.links.keys) {
+        final linkPainter = TextPainter(
+          text: TextSpan(
+            text: linkKey,
+            style: AppTypography.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+          textScaler: textScaler,
+        )..layout(maxWidth: math.max(40.0, innerWidth - 18.0));
+        final linkW = math.min(innerWidth, linkPainter.width + 22.0);
+        final linkH = math.max(linkPainter.height, 20.0);
+
+        if (currentLineWidth > 0 &&
+            currentLineWidth + 14.0 + linkW > innerWidth) {
+          linksHeight += currentLineMaxHeight + 8.0;
+          currentLineWidth = linkW;
+          currentLineMaxHeight = linkH;
+        } else {
+          currentLineWidth += (currentLineWidth > 0 ? 14.0 : 0.0) + linkW;
+          currentLineMaxHeight = math.max(currentLineMaxHeight, linkH);
+        }
+      }
+      linksHeight += currentLineMaxHeight + 36.0;
+    } else {
+      linksHeight = 20.0;
+    }
+
+    final estimatedMinHeight = thumbnailHeight +
+        20.0 +
+        titleHeight +
+        descHeight +
+        (widget.project.tags.isNotEmpty ? 16.0 : 0.0) +
+        tagsHeight +
+        linksHeight +
+        32.0;
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        transform: Matrix4.identity()
-          ..translateByDouble(0.0, isHovered ? -6.0 : 0.0, 0.0, 1.0),
-        decoration: BoxDecoration(
-          color: AppColors.card(context),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isHovered
-                ? AppColors.primaryColor(context).withValues(alpha: 0.5)
-                : line,
-            width: 1.2,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: estimatedMinHeight),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          transform: Matrix4.translationValues(
+            0.0,
+            isHovered ? -6.0 : 0.0,
+            0.0,
           ),
-          boxShadow: isHovered
-              ? AppColors.cardShadowHover(context)
-              : AppColors.cardShadow(context),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Thumbnail / Device Mockup Frame
-            Container(
-              height: 180,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: widget.project.gradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Stylized Mini Phone Mockup
-                  Container(
-                    width: 76,
-                    height: 126,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 7,
-                      vertical: 8,
+          decoration: BoxDecoration(
+            color: AppColors.card(context),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isHovered
+                  ? AppColors.primaryColor(context).withValues(alpha: 0.5)
+                  : line,
+              width: 1.2,
+            ),
+            boxShadow: isHovered
+                ? AppColors.cardShadowHover(context)
+                : AppColors.cardShadow(context),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Thumbnail / Device Mockup Frame - concrete height so IntrinsicHeight is accurate
+              SizedBox(
+                width: double.infinity,
+                height: thumbnailHeight,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: widget.project.gradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xF2FFFFFF),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: const Color(0xFF0F172A),
-                        width: 3.5,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x33000000),
-                          blurRadius: 16,
-                          offset: Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 7,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: widget.project.accentColor,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Container(
-                          height: 6,
-                          width: 42,
-                          decoration: BoxDecoration(
-                            color: widget.project.accentColor.withValues(
-                              alpha: 0.4,
-                            ),
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: widget.project.accentColor.withValues(
-                                alpha: 0.18,
-                              ),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: widget.project.thumbnail.isNotEmpty
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: DeviceFrame(
+                            type: widget.project.deviceType,
+                            accent: widget.project.accentColor,
+                            child: widget.project.thumbnail.trim().isNotEmpty
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(4),
                                     child: PortfolioImage(
                                       imagePath: widget.project.thumbnail,
-                                      fallbackAsset: ImageConstants.notesImage,
+                                      fallbackAsset: '',
                                       width: double.infinity,
                                       height: double.infinity,
                                       fit: BoxFit.cover,
@@ -330,126 +525,170 @@ class _ProjectCardState extends State<_ProjectCard> {
                                 : null,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
 
-                  // Category tag badge in top right
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(99),
-                      ),
-                      child: Text(
-                        widget.project.type,
-                        style: AppTypography.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                      // Category tag badge in top right (bounded so it never overflows)
+                      if (widget.project.type.trim().isNotEmpty)
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: Container(
+                            constraints: BoxConstraints(
+                              maxWidth: math.max(60.0, widget.cardWidth - 24.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.6),
+                              borderRadius: BorderRadius.circular(99),
+                            ),
+                            child: Text(
+                              widget.project.type,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.inter(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
 
-            // Card Body
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.project.title,
-                    style: AppTypography.inter(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w700,
-                      color: text,
+              // Card Body Header & Content
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.project.title,
+                      style: AppTypography.inter(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w700,
+                        color: text,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.project.description,
-                    style: AppTypography.inter(
-                      fontSize: 14,
-                      height: 1.55,
-                      color: muted,
-                    ),
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 8),
 
-                  // Tag Chips
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: widget.project.tags.map((tag) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
+                    // Description clamped to 3 lines with ellipsis, plus "Read more"
+                    Text(
+                      widget.project.description,
+                      style: AppTypography.inter(
+                        fontSize: 14,
+                        height: 1.55,
+                        color: muted,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (widget.project.description.trim().isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      InkWell(
+                        onTap: () => _showFullDescription(context),
+                        borderRadius: BorderRadius.circular(4),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Text(
+                            'Read more',
+                            style: AppTypography.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: primaryInk,
+                            ),
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor(
-                            context,
-                          ).withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                        child: Text(
-                          tag,
-                          style: AppTypography.mono(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w600,
-                            color: primaryInk,
+                      ),
+                    ],
+
+                    const SizedBox(height: 16),
+
+                    // Tag Chips (show all, no hardcoded heights, never hidden behind +N)
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: widget.project.tags.map((tag) {
+                        return Container(
+                          constraints: BoxConstraints(maxWidth: innerWidth),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor(context)
+                                .withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(99),
+                          ),
+                          child: Text(
+                            tag,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.mono(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w600,
+                              color: primaryInk,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Pin links to bottom with Spacer
+              const Spacer(),
+
+              // Links row pinned to bottom (or clean bottom padding if no links)
+              if (widget.project.links.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                  child: Wrap(
+                    spacing: 14,
+                    runSpacing: 8,
+                    children: widget.project.links.entries.map((link) {
+                      return ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: innerWidth),
+                        child: InkWell(
+                          onTap: () => widget.onLaunch(link.value),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  link.key,
+                                  style: AppTypography.inter(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: primaryInk,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.arrow_outward_rounded,
+                                size: 14,
+                                color: primaryInk,
+                              ),
+                            ],
                           ),
                         ),
                       );
                     }).toList(),
                   ),
-                  const SizedBox(height: 20),
-
-                  // Links row (Empty string or null means absent: hide that link or button)
-                  Wrap(
-                    spacing: 14,
-                    runSpacing: 8,
-                    children: widget.project.links.entries.map((link) {
-                      return InkWell(
-                        onTap: () => widget.onLaunch(link.value),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              link.key,
-                              style: AppTypography.inter(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: primaryInk,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.arrow_outward_rounded,
-                              size: 14,
-                              color: primaryInk,
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                )
+              else
+                const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

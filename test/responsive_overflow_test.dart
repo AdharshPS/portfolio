@@ -65,7 +65,6 @@ void main() {
           onExperienceTap: () {},
           onContactTap: () {},
           onMenuTap: () {},
-          onRefreshTap: () {},
         ),
       ));
       await tester.pumpAndSettle();

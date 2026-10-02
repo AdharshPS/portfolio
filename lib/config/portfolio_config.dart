@@ -1,10 +1,14 @@
 class PortfolioConfig {
+  static const String _env = String.fromEnvironment('ENV', defaultValue: 'dev');
+
   /// The remote URL from which portfolio.json is loaded.
+  /// Defaults to the dev branch when ENV=dev, and main branch when ENV=prod.
   /// Overridable via `--dart-define=PORTFOLIO_JSON_URL=<url>`
   static const String jsonUrl = String.fromEnvironment(
     'PORTFOLIO_JSON_URL',
-    defaultValue:
-        'https://raw.githubusercontent.com/AdharshPS/portfolio_new/main/portfolio.json',
+    defaultValue: _env == 'prod'
+        ? 'https://raw.githubusercontent.com/AdharshPS/portfolio_new/main/portfolio.json'
+        : 'https://raw.githubusercontent.com/AdharshPS/portfolio_new/dev/portfolio.json',
   );
 
   /// Storage key for the cached portfolio JSON payload.

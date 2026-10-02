@@ -1,7 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:portfolio_new/widgets/portfolio_image.dart';
+
+AssetImage _unwrapAssetImage(Image imageWidget) {
+  var provider = imageWidget.image;
+  if (provider is ResizeImage) {
+    provider = provider.imageProvider;
+  }
+  expect(provider, isA<AssetImage>());
+  return provider as AssetImage;
+}
 
 void main() {
   testWidgets('PortfolioImage renders Image.asset for local assets', (
@@ -22,39 +30,77 @@ void main() {
 
     expect(find.byType(Image), findsOneWidget);
     final imageWidget = tester.widget<Image>(find.byType(Image));
-    expect(imageWidget.image, isA<AssetImage>());
-    final assetImage = imageWidget.image as AssetImage;
+    final assetImage = _unwrapAssetImage(imageWidget);
     expect(assetImage.assetName, equals('assets/images/me.png'));
   });
 
   testWidgets(
-    'PortfolioImage renders CachedNetworkImage for http/https URLs with cacheKey',
+    'PortfolioImage resolves remote image URLs to local assets without network calls',
     (tester) async {
-      const testUrl = 'https://example.com/avatar.png?v=2';
+      const remoteMeUrl =
+          'https://github.com/AdharshPS/portfolio_new/releases/download/assets/me.webp';
+      const remoteNoteFlowUrl =
+          'https://github.com/AdharshPS/portfolio_new/releases/download/assets/noteflow.png';
 
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: PortfolioImage(
-              imagePath: testUrl,
-              fallbackAsset: 'assets/images/me.png',
-              width: 200,
-              height: 200,
+            body: Column(
+              children: [
+                PortfolioImage(
+                  imagePath: remoteMeUrl,
+                  fallbackAsset: '',
+                  width: 200,
+                  height: 200,
+                ),
+                PortfolioImage(
+                  imagePath: remoteNoteFlowUrl,
+                  fallbackAsset: '',
+                  width: 200,
+                  height: 200,
+                ),
+              ],
             ),
           ),
         ),
       );
 
-      expect(find.byType(CachedNetworkImage), findsOneWidget);
-      final cachedImage = tester.widget<CachedNetworkImage>(
-        find.byType(CachedNetworkImage),
+      final images = tester.widgetList<Image>(find.byType(Image)).toList();
+      expect(images.length, equals(2));
+
+      final assetImage1 = _unwrapAssetImage(images[0]);
+      expect(assetImage1.assetName, equals('assets/images/me.png'));
+
+      final assetImage2 = _unwrapAssetImage(images[1]);
+      expect(
+        assetImage2.assetName,
+        equals('assets/images/projects/noteflow.png'),
       );
-      expect(cachedImage.imageUrl, equals(testUrl));
-      expect(cachedImage.cacheKey, equals(testUrl));
-      expect(cachedImage.width, equals(200));
-      expect(cachedImage.height, equals(200));
-      expect(cachedImage.memCacheWidth, equals(400));
-      expect(cachedImage.memCacheHeight, equals(400));
+    },
+  );
+
+  testWidgets(
+    'PortfolioImage handles unknown http/https URLs by falling back without network calls',
+    (tester) async {
+      const unknownUrl = 'https://unknown-domain.com/random-pic.jpg';
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: PortfolioImage(
+              imagePath: unknownUrl,
+              fallbackAsset: 'assets/images/me.png',
+              width: 150,
+              height: 150,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Image), findsOneWidget);
+      final imageWidget = tester.widget<Image>(find.byType(Image));
+      final assetImage = _unwrapAssetImage(imageWidget);
+      expect(assetImage.assetName, equals('assets/images/me.png'));
     },
   );
 
@@ -76,8 +122,7 @@ void main() {
 
       expect(find.byType(Image), findsOneWidget);
       final imageWidget = tester.widget<Image>(find.byType(Image));
-      expect(imageWidget.image, isA<AssetImage>());
-      final assetImage = imageWidget.image as AssetImage;
+      final assetImage = _unwrapAssetImage(imageWidget);
       expect(assetImage.assetName, equals('assets/images/me.png'));
     },
   );
