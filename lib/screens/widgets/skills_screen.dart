@@ -20,7 +20,9 @@ class SkillsScreen extends StatelessWidget {
       width: double.infinity,
       color: AppColors.bg(context),
       padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 60 : (isTablet ? 40 : 20),
+        horizontal: isDesktop
+            ? 60
+            : (isTablet ? 40 : (size.width < 360 ? 14 : 20)),
         vertical: isDesktop ? 90 : (isTablet ? 70 : 50),
       ),
       child: Center(
@@ -69,6 +71,27 @@ class SkillsScreen extends StatelessWidget {
                       : (availableWidth - (columnCount - 1) * spacing) /
                           columnCount;
 
+                  if (columnCount == 1) {
+                    final cardWidgets = <Widget>[];
+                    for (int i = 0; i < categories.length; i++) {
+                      if (i > 0) {
+                        cardWidgets.add(const SizedBox(height: spacing));
+                      }
+                      cardWidgets.add(
+                        _SkillCategoryCard(
+                          title: categories[i].name,
+                          skills: categories[i].items,
+                          cardWidth: cardWidth,
+                          isSingleColumn: true,
+                        ),
+                      );
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: cardWidgets,
+                    );
+                  }
+
                   final rows = <Widget>[];
                   for (int i = 0; i < categories.length; i += columnCount) {
                     final chunk = categories.sublist(
@@ -88,6 +111,7 @@ class SkillsScreen extends StatelessWidget {
                               title: chunk[col].name,
                               skills: chunk[col].items,
                               cardWidth: cardWidth,
+                              isSingleColumn: false,
                             ),
                           ),
                         );
@@ -132,11 +156,13 @@ class _SkillCategoryCard extends StatefulWidget {
   final String title;
   final List<String> skills;
   final double cardWidth;
+  final bool isSingleColumn;
 
   const _SkillCategoryCard({
     required this.title,
     required this.skills,
     this.cardWidth = 400.0,
+    this.isSingleColumn = false,
   });
 
   @override
@@ -149,9 +175,12 @@ class _SkillCategoryCardState extends State<_SkillCategoryCard> {
   @override
   Widget build(BuildContext context) {
     final textScaler = MediaQuery.textScalerOf(context);
-    final innerWidth = math.max(100.0, widget.cardWidth - 48.0);
+    final isMobile = MediaQuery.of(context).size.width < 640;
+    final cardPadding = isMobile ? 20.0 : 24.0;
+    final horizontalChrome = (cardPadding * 2) + 2.4;
+    final innerWidth = math.max(60.0, widget.cardWidth - horizontalChrome);
 
-    // Measure Title
+    // Measure Title with wrap fallback
     final titlePainter = TextPainter(
       text: TextSpan(
         text: widget.title,
@@ -163,13 +192,16 @@ class _SkillCategoryCardState extends State<_SkillCategoryCard> {
       textDirection: TextDirection.ltr,
       textScaler: textScaler,
     )..layout(maxWidth: innerWidth);
-    final titleHeight = titlePainter.height;
+    final titleHeight = math.max(
+      titlePainter.height,
+      (widget.title.length * 11.0 / innerWidth).ceil() * textScaler.scale(24.0),
+    );
 
-    // Measure Skills Wrap
+    // Measure Skills Wrap with exact chip chrome and font metrics fallback
     double chipsHeight = 0.0;
     if (widget.skills.isNotEmpty) {
       double currentLineWidth = 0;
-      double currentLineMaxHeight = 0;
+      double currentLineMaxHeight = textScaler.scale(32.0);
       for (final skill in widget.skills) {
         final skillPainter = TextPainter(
           text: TextSpan(
@@ -181,9 +213,20 @@ class _SkillCategoryCardState extends State<_SkillCategoryCard> {
           ),
           textDirection: TextDirection.ltr,
           textScaler: textScaler,
-        )..layout(maxWidth: math.max(40.0, innerWidth - 24.0));
-        final chipW = math.min(innerWidth, skillPainter.width + 24.0);
-        final chipH = skillPainter.height + 12.0;
+        )..layout(maxWidth: math.max(40.0, innerWidth - 26.0));
+
+        // Use max of measured width and monospace character width to protect against unrendered / fallback font metrics
+        final measuredW = math.max(
+          skillPainter.width,
+          skill.length * 8.2 * textScaler.scale(1.0),
+        );
+        // Chip has horizontal padding 12*2 = 24 and border 1*2 = 2 -> total 26.0
+        final chipW = math.min(innerWidth, measuredW + 26.0);
+        // Chip has vertical padding 6*2 = 12 and border 1*2 = 2 -> total 14.0
+        final chipH = math.max(
+          skillPainter.height + 14.0,
+          textScaler.scale(32.0),
+        );
 
         if (currentLineWidth > 0 &&
             currentLineWidth + 8.0 + chipW > innerWidth) {
@@ -198,18 +241,22 @@ class _SkillCategoryCardState extends State<_SkillCategoryCard> {
       chipsHeight += currentLineMaxHeight;
     }
 
-    final estimatedMinHeight =
-        48.0 + titleHeight + 16.0 + chipsHeight + 20.0;
+    final estimatedMinHeight = widget.isSingleColumn
+        ? 0.0
+        : (horizontalChrome + titleHeight + 16.0 + chipsHeight + textScaler.scale(36.0));
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: estimatedMinHeight),
+        constraints: widget.isSingleColumn
+            ? const BoxConstraints(minWidth: double.infinity)
+            : BoxConstraints(minHeight: estimatedMinHeight),
         child: AnimatedContainer(
+          width: double.infinity,
           duration: const Duration(milliseconds: 200),
           transform: Matrix4.translationValues(0.0, isHovered ? -4.0 : 0.0, 0.0),
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(cardPadding),
           decoration: BoxDecoration(
             color: AppColors.card(context),
             borderRadius: BorderRadius.circular(16),
@@ -225,6 +272,7 @@ class _SkillCategoryCardState extends State<_SkillCategoryCard> {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 widget.title,

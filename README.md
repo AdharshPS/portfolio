@@ -6,8 +6,8 @@ A responsive, high-performance portfolio web application built with **Flutter We
 
 ## ⚡ Live URLs
 
-* **Production:** [https://adharshps.github.io/portfolio_new/](https://adharshps.github.io/portfolio_new/)
-* **Development:** [https://adharshps.github.io/portfolio_new/dev/](https://adharshps.github.io/portfolio_new/dev/)
+* **Production:** [https://adharshps.github.io/portfolio/](https://adharshps.github.io/portfolio/)
+* **Development:** [https://adharshps.github.io/portfolio/dev/](https://adharshps.github.io/portfolio/dev/)
 
 ---
 
@@ -16,7 +16,7 @@ A responsive, high-performance portfolio web application built with **Flutter We
 Content is managed dynamically via [`portfolio.json`](portfolio.json) and fetched live at runtime from GitHub:
 
 ```text
-https://raw.githubusercontent.com/AdharshPS/portfolio_new/main/portfolio.json
+https://raw.githubusercontent.com/AdharshPS/portfolio/main/portfolio.json
 ```
 
 * **Instant Updates:** Changes pushed to `portfolio.json` appear on the live site immediately upon refresh without needing to recompile Flutter.
@@ -47,8 +47,8 @@ version: 1.0.1+2   # Increment the build number (e.g. +3) or version to trigger 
 
 | Environment | Branch | Live Path | Deployment Trigger |
 | :--- | :--- | :--- | :--- |
-| **Development** | `dev` | `/portfolio_new/dev/` | Push to `dev` with an updated version/build number |
-| **Production** | `main` | `/portfolio_new/` | Push/merge to `main` with an updated version/build number |
+| **Development** | `dev` | `/portfolio/dev/` | Push to `dev` with an updated version/build number |
+| **Production** | `main` | `/portfolio/` | Push/merge to `main` with an updated version/build number |
 
 #### How to Deploy:
 
@@ -89,5 +89,5 @@ flutter run -d chrome
 flutter test
 
 # Build for Web
-flutter build web --release --base-href="/portfolio_new/"
+flutter build web --release --base-href="/portfolio/"
 ```

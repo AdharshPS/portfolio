@@ -7,8 +7,8 @@ class PortfolioConfig {
   static const String jsonUrl = String.fromEnvironment(
     'PORTFOLIO_JSON_URL',
     defaultValue: _env == 'prod'
-        ? 'https://raw.githubusercontent.com/AdharshPS/portfolio_new/main/portfolio.json'
-        : 'https://raw.githubusercontent.com/AdharshPS/portfolio_new/dev/portfolio.json',
+        ? 'https://raw.githubusercontent.com/AdharshPS/portfolio/main/portfolio.json'
+        : 'https://raw.githubusercontent.com/AdharshPS/portfolio/dev/portfolio.json',
   );
 
   /// Storage key for the cached portfolio JSON payload.

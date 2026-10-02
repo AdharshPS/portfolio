@@ -111,6 +111,7 @@ class _ContactMeState extends State<ContactMe> {
                   ],
                 )
               : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _ContactInfo(onLaunch: _launch),
                     const SizedBox(height: 40),
@@ -128,6 +129,7 @@ class _ContactMeState extends State<ContactMe> {
     final isMobile = MediaQuery.of(context).size.width < 640;
 
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.all(isMobile ? 20 : 28),
       decoration: BoxDecoration(
         color: AppColors.card(context),
@@ -335,9 +337,7 @@ class _ContactInfo extends StatelessWidget {
     final location = profile.location ?? ContactConstants.location;
 
     return Column(
-      crossAxisAlignment: isMobile
-          ? CrossAxisAlignment.center
-          : CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           StringConstants.contactMeTitle,
@@ -347,13 +347,13 @@ class _ContactInfo extends StatelessWidget {
             color: text,
             letterSpacing: -0.5,
           ),
-          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+          textAlign: TextAlign.start,
         ),
         const SizedBox(height: 12),
         Text(
           StringConstants.contactMeSubtitle,
           style: AppTypography.inter(fontSize: 16, height: 1.6, color: muted),
-          textAlign: isMobile ? TextAlign.center : TextAlign.start,
+          textAlign: TextAlign.start,
         ),
         const SizedBox(height: 32),
 

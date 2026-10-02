@@ -38,9 +38,9 @@ void main() {
     'PortfolioImage resolves remote image URLs to local assets without network calls',
     (tester) async {
       const remoteMeUrl =
-          'https://github.com/AdharshPS/portfolio_new/releases/download/assets/me.webp';
+          'https://github.com/AdharshPS/portfolio/releases/download/assets/me.webp';
       const remoteNoteFlowUrl =
-          'https://github.com/AdharshPS/portfolio_new/releases/download/assets/noteflow.png';
+          'https://github.com/AdharshPS/portfolio/releases/download/assets/noteflow.png';
 
       await tester.pumpWidget(
         const MaterialApp(

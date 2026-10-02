@@ -162,6 +162,28 @@ void main() {
       },
     );
 
+    testWidgets(
+      '7b. Contact Me Section aligns contact info to the left on mobile screens',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(360, 800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+
+        await tester.pumpWidget(createTestWidget(child: const ContactMe()));
+        await tester.pumpAndSettle();
+
+        final titleTopLeft = tester.getTopLeft(find.text("Let's build something"));
+        final emailTopLeft = tester.getTopLeft(find.text('adharshps000@gmail.com'));
+        final phoneTopLeft = tester.getTopLeft(find.text('+91 8138987626'));
+        final locationTopLeft = tester.getTopLeft(find.text('Kerala, India'));
+
+        // All contact text labels are left-aligned with each other
+        expect(emailTopLeft.dx, equals(phoneTopLeft.dx));
+        expect(emailTopLeft.dx, equals(locationTopLeft.dx));
+        // And title starts at left margin
+        expect(titleTopLeft.dx, lessThan(emailTopLeft.dx));
+      },
+    );
+
     testWidgets('8. Footer Section renders dynamic copyright and links', (
       tester,
     ) async {

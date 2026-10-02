@@ -67,6 +67,7 @@ class TestimonialsScreen extends StatelessWidget {
               // Testimonial Cards
               if (crossAxisCount == 1)
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     for (var i = 0; i < testimonials.length; i++) ...[
                       if (i > 0) const SizedBox(height: 16),
@@ -165,6 +166,7 @@ class _TestimonialCardState extends State<_TestimonialCard> {
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: AnimatedContainer(
+        width: double.infinity,
         duration: const Duration(milliseconds: 200),
         transform: Matrix4.identity()
           ..translateByDouble(0.0, isHovered ? -4.0 : 0.0, 0.0, 1.0),

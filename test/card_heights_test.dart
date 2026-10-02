@@ -90,6 +90,22 @@ void main() {
       expect(intrinsicHeightFinders, findsWidgets);
     });
 
+    testWidgets('SkillsScreen does not overflow at phone and tablet widths', (tester) async {
+      final phoneAndTabWidths = [320.0, 360.0, 375.0, 390.0, 412.0, 480.0, 600.0, 640.0, 700.0, 768.0, 800.0, 834.0, 900.0];
+      for (final w in phoneAndTabWidths) {
+        await tester.binding.setSurfaceSize(Size(w, 1500));
+        await tester.pumpWidget(
+          wrapWithScope(
+            const SkillsScreen(),
+            size: Size(w, 1500),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull, reason: 'Failed at width $w');
+      }
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+    });
+
     testWidgets('Narrow mobile width and large text scale factor does not overflow', (tester) async {
       await tester.binding.setSurfaceSize(const Size(320, 800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
