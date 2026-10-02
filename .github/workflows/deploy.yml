@@ -19,12 +19,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Check if version or build number changed
         id: version_diff
         run: |
-          PREV_VER=$(git show HEAD~1:pubspec.yaml 2>/dev/null | grep '^version:' | awk '{print $2}' || echo "")
+          BEFORE_SHA="${{ github.event.before }}"
+
+          # Fallback to HEAD~1 if before commit doesn't exist (e.g. initial push or empty SHA)
+          if [ -z "$BEFORE_SHA" ] || [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            PREV_VER=$(git show HEAD~1:pubspec.yaml 2>/dev/null | grep '^version:' | awk '{print $2}' || echo "")
+          else
+            PREV_VER=$(git show "$BEFORE_SHA":pubspec.yaml 2>/dev/null | grep '^version:' | awk '{print $2}' || echo "")
+          fi
+
           CURR_VER=$(grep '^version:' pubspec.yaml | awk '{print $2}')
 
           echo "Previous version: $PREV_VER"
