@@ -214,8 +214,8 @@ class _ContactMeState extends State<ContactMe> {
                 'Tell me about your project...',
               ),
               validator: (val) {
-                if (val == null || val.trim().length < 10) {
-                  return 'Write at least 10 characters.';
+                if (val == null || val.trim().isEmpty) {
+                  return 'Please enter a message.';
                 }
                 return null;
               },
