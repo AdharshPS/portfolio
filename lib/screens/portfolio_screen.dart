@@ -41,6 +41,12 @@ class _PortfolioScrollablePageState extends State<PortfolioScrollablePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(const AssetImage('assets/images/me.png'), context);
+  }
+
+  @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
