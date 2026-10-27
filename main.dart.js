@@ -88477,10 +88477,10 @@ A.mH.prototype={}
 A.lK.prototype={}
 A.awx.prototype={
 $1(a){var s="build_version",r=a==null
-if(!r&&a!=="35"){r=this.a
-r.rk(s,"35")
+if(!r&&a!=="39"){r=this.a
+r.rk(s,"39")
 r.qc("portfolio_data_cache")
-r.qc("portfolio_data_cache_timestamp")}else if(r)this.a.rk(s,"35")},
+r.qc("portfolio_data_cache_timestamp")}else if(r)this.a.rk(s,"39")},
 $S:553}
 A.a_w.prototype={
 gl7(){return A.c8([B.am,B.bt,B.b5],t.Au)}}
