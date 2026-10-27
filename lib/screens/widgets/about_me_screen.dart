@@ -93,6 +93,7 @@ class _AvatarBlock extends StatelessWidget {
           width: 212,
           height: 212,
           fit: BoxFit.cover,
+          alignment: Alignment.topCenter,
           fallbackWidget: Container(
             color: const Color(0xFF1E293B),
             child: Center(

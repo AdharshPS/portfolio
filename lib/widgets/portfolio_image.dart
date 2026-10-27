@@ -13,6 +13,7 @@ class PortfolioImage extends StatelessWidget {
   final String imagePath;
   final String fallbackAsset;
   final BoxFit fit;
+  final Alignment alignment;
   final double? width;
   final double? height;
   final double? aspectRatio;
@@ -26,6 +27,7 @@ class PortfolioImage extends StatelessWidget {
     required this.imagePath,
     this.fallbackAsset = '',
     this.fit = BoxFit.cover,
+    this.alignment = Alignment.center,
     this.width,
     this.height,
     this.aspectRatio,
@@ -67,21 +69,6 @@ class PortfolioImage extends StatelessWidget {
     return trimmed;
   }
 
-  int? get _resolvedMemCacheWidth {
-    if (memCacheWidth != null) return memCacheWidth;
-    if (width != null && width!.isFinite && width! > 0) {
-      return (width! * 2).clamp(1, 4096).round();
-    }
-    return null;
-  }
-
-  int? get _resolvedMemCacheHeight {
-    if (memCacheHeight != null) return memCacheHeight;
-    if (height != null && height!.isFinite && height! > 0) {
-      return (height! * 2).clamp(1, 4096).round();
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +83,9 @@ class PortfolioImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        cacheWidth: _resolvedMemCacheWidth,
-        cacheHeight: _resolvedMemCacheHeight,
+        alignment: alignment,
+        cacheWidth: memCacheWidth,
+        cacheHeight: memCacheHeight,
         errorBuilder: (context, error, stackTrace) =>
             _buildAssetFallback(context),
       );
@@ -119,8 +107,9 @@ class PortfolioImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        cacheWidth: _resolvedMemCacheWidth,
-        cacheHeight: _resolvedMemCacheHeight,
+        alignment: alignment,
+        cacheWidth: memCacheWidth,
+        cacheHeight: memCacheHeight,
         errorBuilder: (context, error, stackTrace) {
           return _buildNeutralIconBox(context);
         },
