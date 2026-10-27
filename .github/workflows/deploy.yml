@@ -5,8 +5,9 @@ on:
     branches:
       - dev
       - main
-    paths:
-      - 'pubspec.yaml'
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
   workflow_dispatch:
 
 permissions:
@@ -22,28 +23,45 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check if version or build number changed
+      - name: Check if version changed on this branch
         id: version_diff
         run: |
+          BRANCH="${{ github.ref_name }}"
           BEFORE_SHA="${{ github.event.before }}"
 
-          # Fallback to HEAD~1 if before commit doesn't exist (e.g. initial push or empty SHA)
-          if [ -z "$BEFORE_SHA" ] || [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
-            PREV_VER=$(git show HEAD~1:pubspec.yaml 2>/dev/null | grep '^version:' | awk '{print $2}' || echo "")
-          else
+          CURR_VER=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          PREV_VER=""
+
+          # 1. Check against the commit this branch pointed to before the push
+          if [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
             PREV_VER=$(git show "$BEFORE_SHA":pubspec.yaml 2>/dev/null | grep '^version:' | awk '{print $2}' || echo "")
           fi
 
-          CURR_VER=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          # 2. Fallback if BEFORE_SHA is not available or empty (e.g. initial push or merge)
+          if [ -z "$PREV_VER" ]; then
+            # If this is a merge commit (has 2 parents), HEAD^1 is the previous commit of THIS target branch
+            if git rev-parse --verify HEAD^2 >/dev/null 2>&1; then
+              PREV_VER=$(git show HEAD^1:pubspec.yaml 2>/dev/null | grep '^version:' | awk '{print $2}' || echo "")
+            else
+              PREV_VER=$(git show HEAD~1:pubspec.yaml 2>/dev/null | grep '^version:' | awk '{print $2}' || echo "")
+            fi
+          fi
 
-          echo "Previous version: $PREV_VER"
-          echo "Current version:  $CURR_VER"
+          echo "Target Branch: $BRANCH"
+          echo "Previous version on $BRANCH: '$PREV_VER'"
+          echo "Current version on $BRANCH:  '$CURR_VER'"
 
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ -z "$PREV_VER" ] || [ "$PREV_VER" != "$CURR_VER" ]; then
-            echo "Version changed or manual dispatch! Proceeding with deployment."
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual workflow dispatch: Proceeding with deployment."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif [ -z "$PREV_VER" ]; then
+            echo "No previous version found on $BRANCH: Proceeding with deployment."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif [ "$PREV_VER" != "$CURR_VER" ]; then
+            echo "Version changed on $BRANCH ($PREV_VER -> $CURR_VER): Proceeding with deployment."
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Version and build number did not change. Skipping deployment."
+            echo "Version did not change on $BRANCH ($PREV_VER == $CURR_VER): Skipping deployment."
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
